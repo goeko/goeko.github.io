@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Vue.js Financial Calculator</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+</head>
+<style>
+        ::root {
+            --highlight-font-size: 1.2em;
+        }
+        * {
+          font-family: Arial, Helvetica, sans-serif;
+        }
+        #app {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+        #app > * {
+            flex: 1 1 300px;
+            margin: 0 10px 10px 0;
+            padding: 10px;
+            border: 1px solid black;
+        }
+        fieldset {
+            border: none;
+            padding: 0;
+        }
+        legend {
+            display: block;
+            width: 100%;
+            padding: 0 0.5em 0.5em 0;
+            margin-bottom: 0.75em;
+            border-bottom: 1px solid black;
+        }
+        p {
+            margin: 0 0 10px 0;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            align-content: center;
+        }
+        legend {
+            font-weight: bold;
+        }
+        label {
+            display: inline-block;
+            width: 350px;
+        }
+        input {
+            width: 120px;
+            text-align: right;
+            font-size: var(--highlight-font-size);
+            flex-basis: content;
+        }
+        input[type="checkbox"] {
+            width: auto;
+            margin: 0 10px 0 20px;
+        }
+        span {
+            display: block;
+            width: 175px;
+            font-weight: bold;
+            text-align: right;
+        }
+        span::after {
+            content: " €";
+        }
+        p.darlehen {
+            color: blue;
+            font-size: var(--highlight-font-size);
+        }
+        p.RS {
+            color: red;
+            font-size: var(--highlight-font-size);
+        }
+        p.MR {
+            color: green;
+            font-size: var(--highlight-font-size);
+        }
+        input[type="number"]{
+            padding: 0.1em 0 0.1em 0.5em;
+        }
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            transform: scale(1.25) translateX(2px);
+        }
+        #neukauf_parameter {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: wrap;
+            flex: 1 1 300px;
+            /*padding: 1em 0 0;*/
+            margin: 0 0 0.75em;
+            border: none;
+            border-top: 1px solid black;
+        }
+        label.neukauf {
+            width: 120px;
+        }
+        #neukauf_parameter label:last-child {
+            width: 100px;
+
+        }
+        #sonderzahlung_wrapper input {
+            width: 11em !important;
+            min-width: 11em !important;
+        }
+        table {
+            border-collapse: collapse;
+            border: 1px solid black;
+        }
+        table th {
+            font-weight: bold;
+        }
+        table th,
+        table td {
+            border: 1px solid black;
+            padding: 0.2em 0.75em;
+            text-align: right;
+        }
+        .baureno-wrapper {
+            padding-top: 0.75em;
+            border-top: 1px solid black;
+        }
+
+    </style>
+<body>
+    <h1>Kreditrechner für Ratenkredite als Annuitätendarlehen</h1>
+    <p>Vereinbarte Darlehens Sondertilgung berücksichtigt</p>
+    <div id="app">
+        <div>
+            <fieldset class="params">
+                <legend>Darlehen Parameter <button @click="resetAll">Werte zurücksetzen</button></legend>
+                <p>
+                    <label for="kaufpreis">Kaufpreis der Immobilie:
+                        <label for="neukauf" class="neukauf"><input id="neukauf" v-model="neukauf" type="checkbox"> Neukauf?</label>
+                    </label> <input id="kaufpreis" v-model.number="kaufpreis" type="number" step="1000">
+                </p>
+
+                <fieldset id="neukauf_parameter" v-show="neukauf">
+                    <legend>Kosten beim Neukauf</legend>
+                    <p><label for="grundsteuer">Grunderwerbssteuer in % ({{ (kaufpreis / 100 * grundsteuer).toFixed(2) }} €): </label> <input id="grundsteuer" v-model.number="grundsteuer" type="number" :min="0" step="0.01"> <label for="includeGrundsteuer"><input id="includeGrundsteuer" v-model="includeGrundsteuer" type="checkbox"> Inkl.</label></p>
+                    <p><label for="notargericht">Notar- und Gerichtskosten in % ({{ (kaufpreis / 100 * notargericht).toFixed(2) }} €): </label> <input id="notargericht" v-model.number="notargericht" type="number" :min="0" step="0.01"> <label for="includeNotargericht"><input id="includeNotargericht" v-model="includeNotargericht" type="checkbox"> Inkl.</label></p>
+                    <p><label for="makler">Maklerprovision in % ({{ (kaufpreis / 100 * makler).toFixed(2) }} €): </label> <input id="makler" v-model.number="makler" type="number" step="0.01" :min="0" step="0.01"> <label for="includeMakler"><input id="includeMakler" v-model="includeMakler" type="checkbox"> Inkl.</label></p>
+                </fieldset>
+                <p class="baureno-wrapper"><label for="baureno">Bau-/Renovierungskosten: </label> <input id="baureno" v-model.number="baureno" type="number" step="500" :min="0"></p>
+                <p class="eigenkapital-wrapper"><label for="eigenkapital">Eigenkapital <small>(min. Steuern, Notar und Auslagen)</small>: </label> <input id="eigenkapital" v-model.number="eigenkapital" type="number" step="500" :min="0"></p>
+                <hr>
+                <p><label for="nominal">Nominalzinssatz: </label> <input id="nominal" v-model.number="nominal" type="number" step="0.01" :min="0"></p>
+                <p><label for="tilgung">Anfängliche Tilgung in % p.a.: </label> <input id="tilgung" v-model.number="tilgung" type="number" step="0.01" :min="0"></p>
+                <p><label for="jahre">Dauer der Zinsbindung: </label> <input id="jahre" v-model.number="jahre" type="number" step="1" :min="1"></p>
+                <hr>
+                <p class="gesamtkosten"><label>Gesamtkosten:</label> <span>{{ gesamtkosten }}</span></p>
+                <p class="darlehen"><label>Darlehensbetrag:</label> <span>{{ darlehen }}</span></p>
+                <p class="JR"><label>Jährliche Ratenzahlung nominal:</label> <span>{{ JR }}</span></p>
+                <p class="MR"><label>Monatliche Ratenzahlung nominal:</label> <span>{{ MR }}</span></p>
+                <p class="GBE"><label>Getilgter Betrag <small>(bis zum Ende der Zinsbindung)</small>:</label> <span>{{ GBE }}</span></p>
+                <p class="RS"><label>Restschuld <small>(am Ende der Zinsbindung)</small>:</label> <span>{{ RS }}</span></p>
+                <p class="GZ"><label>Bereits bezahlt Summe:</label> <span>{{ GZ }}</span></p>
+                <p class="GZZ"><label>Davon Zinsen <small>(Steuerbefreit?)</small>:</label> <span>{{ GZZ }}</span></p>
+            </fieldset>
+        </div>
+
+
+        <div>
+            <fieldset id="sonderzahlung_wrapper">
+                <legend>Sonderzahlungen ({{jahre}} Jahre)</legend>
+                <p><label for="max_sonderzahlung">Max. Sonderzahlung in % je p.a. ({{ Number(darlehen / 100 * max_sonderzahlung).toFixed(2) }} €): </label> <input id="max_sonderzahlung" v-model.number="max_sonderzahlung" type="number" step="0.01"></p>
+                <hr>
+                <p v-for="index in jahre" :key="index">
+                    <label :for="'sonderzahlung' + index">Sonderzahlung Jahr {{ index }}: </label>
+                    <input :id="'sonderzahlung' + index" v-model.number="sonderzahlungen[index - 1]" type="number" :max="maxSonderzahlungValue" :min="0" step="500">
+                </p>
+            </fieldset>
+        </div>
+
+        <div>
+            <fieldset id="tilgungsplan_wrapper">
+                <legend>Tilgungsplan</legend>
+                <table border="1">
+                    <thead>
+                    <tr>
+                        <th>Jahr</th>
+                        <th>Tilgung</th>
+                        <th>Zinsen</th>
+                        <th>Ausgaben p.a.</th>
+                        <th>Getilgter Betrag</th>
+                        <th>Restschuld</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="year in tilgungsplan" :key="year.jahr">
+                        <td>{{ year.jahr }}</td>
+                        <td>{{ parseFloat(year.tilgung).toFixed(2) }}&nbsp;€</td>
+                        <td>{{ parseFloat(year.zinsen).toFixed(2) }}&nbsp;€</td>
+                        <td>{{ parseFloat(year.tilgung + year.zinsen).toFixed(2) }}&nbsp;€</td>
+                        <td>{{ parseFloat(year.GBE).toFixed(2) }}&nbsp;€</td>
+                        <td>{{ parseFloat(year.restschuld).toFixed(2) }}&nbsp;€</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </fieldset>
+        </div>
+
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+            /*
+                kaufpreis: 350000,
+                neukauf: false,
+                grundsteuer: 3.5,
+                notargericht: 1.5,
+                makler: 3.57,
+                baureno: 8000,
+                eigenkapital: 17500,
+                nominal: 3.03,
+                tilgung: 2.67,
+                jahre: 10,
+                max_sonderzahlung: 5, // Beispielwert
+                sonderzahlungen: Array(10).fill(0),
+                MR: 0,
+                GBE: 0,
+                RS: 0,
+                JR: 0,
+                GZ: 0,
+                GZZ: 0,
+                includeGrundsteuer: true,
+                includeNotargericht: true,
+                includeMakler: true,
+                */
+                kaufpreis: 180000,
+                neukauf: true,
+                grundsteuer: 3.5,
+                notargericht: 1.5,
+                makler: 3.57,
+                baureno: 0,
+                eigenkapital: 0,
+                nominal: 3.03,
+                tilgung: 2.67,
+                jahre: 10,
+                max_sonderzahlung: 5, // Beispielwert
+                sonderzahlungen: Array(30).fill(0),
+                MR: 0,
+                GBE: 0,
+                RS: 0,
+                JR: 0,
+                GZ: 0,
+                GZZ: 0,
+                includeGrundsteuer: true,
+                includeNotargericht: true,
+                includeMakler: true,
+                tilgungsplan: [],
+
+                originalData: null
+            },
+            computed: {
+                gesamtkosten: function() {
+                    var grundsteuer = this.includeGrundsteuer ? this.kaufpreis * this.grundsteuer / 100 : 0;
+                    var notargericht = this.includeNotargericht ? this.kaufpreis * this.notargericht / 100 : 0;
+                    var makler = this.includeMakler ? this.kaufpreis * this.makler / 100 : 0;
+                    return this.kaufpreis + grundsteuer + notargericht + makler;
+                },
+                darlehen: function() {
+                    return this.gesamtkosten + this.baureno - this.eigenkapital;
+                },
+                maxSonderzahlungValue: function() {
+                    return this.darlehen * this.max_sonderzahlung / 100;
+                },
+                GZ: function() {
+                    var MR = this.MR;
+                    var zahlungenProJahr = 12;
+                    var jahre = this.jahre;
+                    var GZ = (MR * zahlungenProJahr) * jahre;
+                    return this.FloatNum(GZ);
+                },
+            },
+            methods: {
+                RR: function() {
+                    var darlehen = this.darlehen;
+                    var nominal = this.nominal;
+                    var tilgung = this.tilgung;
+                    var zahlungenProJahr = 12;
+                    var jahre = this.jahre;
+                    var MR = Math.round((darlehen * (nominal + tilgung) / zahlungenProJahr) + 0.00) / 100;
+                    var RS = darlehen;
+                    var JRN = (darlehen * (nominal) / zahlungenProJahr) / 100;
+                    var JRT = (darlehen * (tilgung) / zahlungenProJahr) / 100;
+                    var festzinz = JRN + JRT;
+                    var tilgungsplan = [];
+                    var i = 1;
+                    while(i <= (jahre * zahlungenProJahr)){
+                        JRN = (RS * (nominal) / zahlungenProJahr) / 100;
+                        JRT = festzinz - JRN;
+                        // Subtrahieren der Sonderzahlung von der Restschuld
+                        if (i % 12 === 0) { // prüfen, ob das aktuelle Jahr abgeschlossen ist
+                            var jahr = i / 12;
+                            if (jahr <= this.sonderzahlungen.length) {
+                                RS = RS - this.sonderzahlungen[jahr - 1];
+                            }
+                            tilgungsplan.push({
+                                jahr: jahr,
+                                tilgung: JRT * 12,
+                                zinsen: JRN * 12,
+                                restschuld: RS - JRT,
+                                GBE: this.darlehen - RS + JRT
+                            });
+                        }
+                        RS = RS - JRT;
+                        i++;
+                    }
+                    this.tilgungsplan = tilgungsplan;
+                    var JR = Math.round((darlehen * (nominal + tilgung)) + 0.00) / 100;
+                    var MR = this.FloatNum(MR);
+                    var GBE = this.FloatNum(this.darlehen - RS);
+                    var GZ = this.FloatNum((MR * zahlungenProJahr) * jahre);
+                    var GZZ = this.FloatNum(GZ - GBE);
+                    this.MR = MR;
+                    this.GBE = GBE;
+                    if(RS > 0){
+                        this.RS= this.FloatNum(RS);
+                    } else {
+                        this.GBE = this.darlehen;
+                        this.RS = 0.00;
+                    }
+                    this.JR = JR;
+                    this.GZ = GZ;
+                    this.GZZ = GZZ;
+                },
+                FloatNum: function(myFloat) {
+                    var myNumber = Math.round(myFloat * 100);
+                    var myNumber = myNumber / 100;
+                    var myString = "" + parseFloat(myNumber).toFixed(2);
+                    var myZahlenArray = myString.split(".");
+                    if (myZahlenArray.length > 1) {
+                        var VorKomma = myZahlenArray[0];
+                        var NachKomma = myZahlenArray[1];
+                        if (NachKomma.length == 1) {
+                            var NachKomma = NachKomma + "0";
+                        }
+                        var myString = VorKomma + "." + NachKomma;
+                    } else {
+                        var myString = myString + ".00";
+                    }
+                    return myString;
+                },
+                loadFromLocalStorage() {
+                    if(localStorage.getItem('store')) {
+                        try {
+                            let storedData = JSON.parse(localStorage.getItem('store'));
+                            Object.keys(storedData).forEach(key => {
+                                this.$data[key] = storedData[key];
+                            });
+                        } catch(e) {
+                            console.error('Fehler beim Abrufen von Daten aus dem localStorage', e);
+                        }
+                    }
+                },
+                resetData() {
+                    Object.assign(this.$data, this.originalData);
+                },
+                resetAll() {
+                    localStorage.removeItem('store');
+                    this.resetData();
+                    window.location.reload(true);
+                }
+            },
+            watch: {
+                kaufpreis: function() {
+                    this.RR();
+                },
+                neukauf: function(newValue, oldValue) {
+                    if (!newValue) {  // Wenn neukauf deaktiviert ist
+                        this.includeGrundsteuer = false;
+                        this.includeNotargericht = false;
+                        this.includeMakler = false;
+                    } else {
+                        this.includeGrundsteuer = true;
+                        this.includeNotargericht = true;
+                        this.includeMakler = true;
+                    }
+                    if (newValue !== oldValue) {
+                        var grundsteuer = (this.includeGrundsteuer == true) ? this.grundsteuer : 0;
+                        var notargericht = (this.includeNotargericht == true) ? this.notargericht : 0;
+                        var makler = (this.includeMakler == true) ? this.makler : 0;
+                        this.eigenkapital = (this.kaufpreis / 100 * (grundsteuer + notargericht + makler)).toFixed(2)
+                    }
+                },
+                grundsteuer: function() {
+                    this.RR();
+                },
+                notargericht: function() {
+                    this.RR();
+                },
+                makler: function() {
+                    this.RR();
+                },
+                baureno: function() {
+                    this.RR();
+                },
+                eigenkapital: function() {
+                    this.RR();
+                },
+                nominal: function() {
+                    this.RR();
+                },
+                tilgung: function() {
+                    this.RR();
+                },
+                jahre: function() {
+                    this.RR();
+                },
+                max_sonderzahlung: function() {
+                    this.RR();
+                },
+                sonderzahlungen: {
+                    handler: function() {
+                        this.RR();
+                    },
+                    deep: true
+                },
+                includeGrundsteuer: function() {
+                    this.RR();
+                },
+                includeNotargericht: function() {
+                    this.RR();
+                },
+                includeMakler: function() {
+                    this.RR();
+                },
+                // Immer wenn sich der Zustand ändert, speichere ihn in localStorage
+                '$data': {
+                  handler: function (val, oldVal) {
+                    console.log('store changed');
+                    localStorage.setItem('store', JSON.stringify(val));
+                  },
+                  deep: true
+                }
+            },
+            created: function() {
+                this.RR();
+
+                this.originalData = {...this.$data};
+                // this.initValuesFromLocalStorage();
+
+                if (localStorage.getItem('store')) {
+                  try {
+                    this.$data = JSON.parse(localStorage.getItem('store'));
+                  } catch(e) {
+                    localStorage.removeItem('store');
+                  }
+                }
+            },
+            mounted() {
+                this.loadFromLocalStorage();
+            }
+        });
+    </script>
+</body>
+</html>
