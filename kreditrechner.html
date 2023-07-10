@@ -331,11 +331,14 @@
                     this.GZ = GZ;
                     this.GZZ = GZZ;
 
+                    var GZZ_el = document.querySelectorAll('.GZZ')[0];
                     if (GZZ < 0) {
-                        document.querySelectorAll('.GZZ')[0].style.color = 'red';
+                        GZZ_el.style.color = 'red';
+                        GZZ_el.style.border = '1px solid red';
                         alert('Die kalkulierten Zinsen (Davon Zinsen) dürfen nicht Negativ werden.')
                     } else {
-                        document.querySelectorAll('.GZZ')[0].style.color = '';
+                        GZZ_el.style.color = '';
+                        GZZ_el.style.border = '';
                     }
 
                 },
