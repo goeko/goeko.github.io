@@ -332,7 +332,10 @@
                     this.GZZ = GZZ;
 
                     if (GZZ < 0) {
+                        document.querySelectorAll('.GZZ')[0].style.color = 'red';
                         alert('Die kalkulierten Zinsen (Davon Zinsen) dürfen nicht Negativ werden.')
+                    } else {
+                        document.querySelectorAll('.GZZ')[0].style.color = '';
                     }
 
                 },
