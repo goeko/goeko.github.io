@@ -263,7 +263,7 @@
                     var grundsteuer = this.includeGrundsteuer ? this.kaufpreis * this.grundsteuer / 100 : 0;
                     var notargericht = this.includeNotargericht ? this.kaufpreis * this.notargericht / 100 : 0;
                     var makler = this.includeMakler ? this.kaufpreis * this.makler / 100 : 0;
-                    return this.kaufpreis + grundsteuer + notargericht + makler;
+                    return this.kaufpreis + this.baureno + grundsteuer + notargericht + makler;
                 },
                 darlehen: function() {
                     return this.gesamtkosten + this.baureno - this.eigenkapital;
