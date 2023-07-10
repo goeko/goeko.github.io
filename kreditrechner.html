@@ -330,6 +330,11 @@
                     this.JR = JR;
                     this.GZ = GZ;
                     this.GZZ = GZZ;
+
+                    if (GZZ < 0) {
+                        alert('Die kalkulierten Zinsen dürfen nicht Negativ werden.')
+                    }
+                    
                 },
                 FloatNum: function(myFloat) {
                     var myNumber = Math.round(myFloat * 100);
