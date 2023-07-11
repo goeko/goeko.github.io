@@ -485,6 +485,8 @@
                 // überprüfen Sie, ob es einen 'store' GET Parameter in der URL gibt
                 var urlParams = new URLSearchParams(window.location.search);
                 if(urlParams.has('store')) {
+                    localStorage.removeItem('store');
+
                     // holen Sie die Daten aus der URL und decodieren Sie sie
                     var storedData = JSON.parse(decodeURIComponent(urlParams.get('store')));
 
