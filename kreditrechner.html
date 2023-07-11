@@ -71,11 +71,11 @@
             color: blue;
             font-size: var(--highlight-font-size);
         }
-        p.RS {
+        p.rest_schuld {
             color: red;
             font-size: var(--highlight-font-size);
         }
-        p.MR {
+        p.monatliche_rate {
             color: green;
             font-size: var(--highlight-font-size);
         }
@@ -157,12 +157,12 @@
                 <hr>
                 <p class="gesamtkosten"><label>Gesamtkosten:</label> <span>{{ gesamtkosten }}</span></p>
                 <p class="darlehen"><label>Darlehensbetrag:</label> <span>{{ darlehen }}</span></p>
-                <p class="JR"><label>Jährliche Ratenzahlung nominal:</label> <span>{{ JR }}</span></p>
-                <p class="MR"><label>Monatliche Ratenzahlung nominal:</label> <span>{{ MR }}</span></p>
-                <p class="GBE"><label>Getilgter Betrag <small>(bis zum Ende der Zinsbindung)</small>:</label> <span>{{ GBE }}</span></p>
-                <p class="RS"><label>Restschuld <small>(am Ende der Zinsbindung)</small>:</label> <span>{{ RS }}</span></p>
-                <p class="GZ"><label>Bereits bezahlt Summe:</label> <span>{{ GZ }}</span></p>
-                <p class="GZZ"><label>Davon Zinsen <small>(Steuerbefreit?)</small>:</label> <span>{{ GZZ }}</span></p>
+                <p class="jaehrliche_ratenzahlung"><label>Jährliche Ratenzahlung nominal:</label> <span>{{ jaehrliche_ratenzahlung }}</span></p>
+                <p class="monatliche_rate"><label>Monatliche Ratenzahlung nominal:</label> <span>{{ monatliche_rate }}</span></p>
+                <p class="getilgter_betrag_zum_ende"><label>Getilgter Betrag <small>(bis zum Ende der Zinsbindung)</small>:</label> <span>{{ getilgter_betrag_zum_ende }}</span></p>
+                <p class="rest_schuld"><label>Restschuld <small>(am Ende der Zinsbindung)</small>:</label> <span>{{ rest_schuld }}</span></p>
+                <p class="bereits_gezahlte_summe"><label>Bereits bezahlt Summe:</label> <span>{{ bereits_gezahlte_summe }}</span></p>
+                <p class="gezahlte_zinsen"><label>Davon Zinsen <small>(Steuerbefreit?)</small>:</label> <span>{{ gezahlte_zinsen }}</span></p>
             </fieldset>
         </div>
 
@@ -199,7 +199,7 @@
                         <td>{{ parseFloat(year.tilgung).toFixed(2) }}&nbsp;€</td>
                         <td>{{ parseFloat(year.zinsen).toFixed(2) }}&nbsp;€</td>
                         <td>{{ parseFloat(year.tilgung + year.zinsen).toFixed(2) }}&nbsp;€</td>
-                        <td>{{ parseFloat(year.GBE).toFixed(2) }}&nbsp;€</td>
+                        <td>{{ parseFloat(year.getilgter_betrag_zum_ende).toFixed(2) }}&nbsp;€</td>
                         <td>{{ parseFloat(year.restschuld).toFixed(2) }}&nbsp;€</td>
                     </tr>
                     </tbody>
@@ -227,12 +227,12 @@
                 jahre: 10,
                 max_sonderzahlung: 5, // Beispielwert
                 sonderzahlungen: Array(10).fill(0),
-                MR: 0,
-                GBE: 0,
-                RS: 0,
-                JR: 0,
-                GZ: 0,
-                GZZ: 0,
+                monatliche_rate: 0,
+                getilgter_betrag_zum_ende: 0,
+                rest_schuld: 0,
+                jaehrliche_ratenzahlung: 0,
+                bereits_gezahlte_summe: 0,
+                gezahlte_zinsen: 0,
                 includeGrundsteuer: true,
                 includeNotargericht: true,
                 includeMakler: true,
@@ -249,12 +249,12 @@
                 jahre: 10,
                 max_sonderzahlung: 5, // Beispielwert
                 sonderzahlungen: Array(30).fill(0),
-                MR: 0,
-                GBE: 0,
-                RS: 0,
-                JR: 0,
-                GZ: 0,
-                GZZ: 0,
+                monatliche_rate: 0,
+                getilgter_betrag_zum_ende: 0,
+                rest_schuld: 0,
+                jaehrliche_ratenzahlung: 0,
+                bereits_gezahlte_summe: 0,
+                gezahlte_zinsen: 0,
                 includeGrundsteuer: true,
                 includeNotargericht: true,
                 includeMakler: true,
@@ -275,12 +275,12 @@
                 maxSonderzahlungValue: function() {
                     return this.darlehen * this.max_sonderzahlung / 100;
                 },
-                GZ: function() {
-                    var MR = this.MR;
+                bereits_gezahlte_summe: function() {
+                    var monatliche_rate = this.monatliche_rate;
                     var zahlungenProJahr = 12;
                     var jahre = this.jahre;
-                    var GZ = (MR * zahlungenProJahr) * jahre;
-                    return this.FloatNum(GZ);
+                    var bereits_gezahlte_summe = (monatliche_rate * zahlungenProJahr) * jahre;
+                    return this.FloatNum(bereits_gezahlte_summe);
                 },
             },
             methods: {
@@ -290,64 +290,63 @@
                     var tilgung = this.tilgung;
                     var zahlungenProJahr = 12;
                     var jahre = this.jahre;
-                    var MR = Math.round((darlehen * (nominal + tilgung) / zahlungenProJahr) + 0.00) / 100;
-                    var RS = darlehen;
-                    var JRN = (darlehen * (nominal) / zahlungenProJahr) / 100;
-                    var JRT = (darlehen * (tilgung) / zahlungenProJahr) / 100;
-                    var festzinz = JRN + JRT;
+                    var monatliche_rate = this.FloatNum(Math.round((darlehen * (nominal + tilgung) / zahlungenProJahr) + 0.00) / 100);
+                    var rest_schuld = darlehen;
+                    var jaehrliche_zinsen_nominal = (darlehen * (nominal) / zahlungenProJahr) / 100;
+                    var jaehrliche_tilgung = (darlehen * (tilgung) / zahlungenProJahr) / 100;
+                    var festzinz = jaehrliche_zinsen_nominal + jaehrliche_tilgung;
                     var tilgungsplan = [];
                     var i = 1;
                     while(i <= (jahre * zahlungenProJahr)){
-                        JRN = (RS * (nominal) / zahlungenProJahr) / 100;
-                        JRT = festzinz - JRN;
+                        jaehrliche_zinsen_nominal = (rest_schuld * (nominal) / zahlungenProJahr) / 100;
+                        jaehrliche_tilgung = festzinz - jaehrliche_zinsen_nominal;
                         // Subtrahieren der Sonderzahlung von der Restschuld
                         if (i % 12 === 0) { // prüfen, ob das aktuelle Jahr abgeschlossen ist
                             var jahr = i / 12;
                             if (jahr <= this.sonderzahlungen.length) {
-                                RS = RS - this.sonderzahlungen[jahr - 1];
+                                rest_schuld = rest_schuld - this.sonderzahlungen[jahr - 1];
                             }
                             tilgungsplan.push({
                                 jahr: jahr,
-                                tilgung: JRT * 12,
-                                zinsen: JRN * 12,
-                                restschuld: RS - JRT,
-                                GBE: this.darlehen - RS + JRT
+                                tilgung: jaehrliche_tilgung * 12,
+                                zinsen: jaehrliche_zinsen_nominal * 12,
+                                restschuld: rest_schuld - jaehrliche_tilgung,
+                                getilgter_betrag_zum_ende: this.darlehen - rest_schuld + jaehrliche_tilgung
                             });
                         }
-                        RS = RS - JRT;
+                        rest_schuld = rest_schuld - jaehrliche_tilgung;
                         i++;
                     }
-                    var JR = Math.round((darlehen * (nominal + tilgung)) + 0.00) / 100;
-                    var MR = this.FloatNum(MR);
-                    var GBE = this.FloatNum(this.darlehen - RS);
-                    var GZ = this.FloatNum((MR * zahlungenProJahr) * jahre);
-                    var GZZ = this.FloatNum(GZ - GBE);
+                    var jaehrliche_ratenzahlung = Math.round((darlehen * (nominal + tilgung)) + 0.00) / 100;
+                    var getilgter_betrag_zum_ende = this.FloatNum(this.darlehen - rest_schuld);
+                    var bereits_gezahlte_summe = this.FloatNum((monatliche_rate * zahlungenProJahr) * jahre);
+                    var gezahlte_zinsen = this.FloatNum(bereits_gezahlte_summe - getilgter_betrag_zum_ende);
 
-                    if (GZZ < 0 || RS <= 0) {
+                    if (gezahlte_zinsen < 0 || rest_schuld <= 0) {
                         throw new Error("Die kalkulierten Zinsen (Davon Zinsen) dürfen nicht negativ werden.");
                     }
 
                     this.tilgungsplan = tilgungsplan;
-                    this.MR = MR;
-                    this.GBE = GBE;
-                    if(RS > 0){
-                        this.RS= this.FloatNum(RS);
+                    this.monatliche_rate = monatliche_rate;
+                    this.getilgter_betrag_zum_ende = getilgter_betrag_zum_ende;
+                    if(rest_schuld > 0){
+                        this.rest_schuld= this.FloatNum(rest_schuld);
                     } else {
-                        this.GBE = this.darlehen;
-                        this.RS = 0.00;
+                        this.getilgter_betrag_zum_ende = this.darlehen;
+                        this.rest_schuld = 0.00;
                     }
-                    this.JR = JR;
-                    this.GZ = GZ;
-                    this.GZZ = GZZ;
+                    this.jaehrliche_ratenzahlung = jaehrliche_ratenzahlung;
+                    this.bereits_gezahlte_summe = bereits_gezahlte_summe;
+                    this.gezahlte_zinsen = gezahlte_zinsen;
 
-                    var GZZ_el = document.querySelectorAll('.GZZ')[0];
-                    if (GZZ < 0) {
-                        GZZ_el.style.color = 'red';
-                        GZZ_el.style.border = '1px solid red';
+                    var gezahlte_zinsen_el = document.querySelectorAll('.gezahlte_zinsen')[0];
+                    if (gezahlte_zinsen < 0) {
+                        gezahlte_zinsen_el.style.color = 'red';
+                        gezahlte_zinsen_el.style.border = '1px solid red';
                         alert('Die kalkulierten Zinsen (Davon Zinsen) dürfen nicht Negativ werden.')
                     } else {
-                        GZZ_el.style.color = '';
-                        GZZ_el.style.border = '';
+                        gezahlte_zinsen_el.style.color = '';
+                        gezahlte_zinsen_el.style.border = '';
                     }
                 },
                 FloatNum: function(myFloat) {
