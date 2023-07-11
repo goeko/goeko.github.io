@@ -132,7 +132,10 @@
     <div id="app">
         <div>
             <fieldset class="params">
-                <legend>Darlehen Parameter <button @click="resetAll">Werte zurücksetzen</button></legend>
+                <legend>Darlehen Parameter
+                    <button @click="resetAll">Werte zurücksetzen</button>
+                    <button @click="copyToClipboard">Link kopieren</button>
+                </legend>
                 <p>
                     <label for="kaufpreis">Kaufpreis der Immobilie:
                         <label for="neukauf" class="neukauf"><input id="neukauf" v-model="neukauf" type="checkbox"> Neukauf?</label>
@@ -210,6 +213,7 @@
         new Vue({
             el: '#app',
             data: {
+                baseurl: 'https://goeko.github.io/kreditrechner.html????',
             /*
                 kaufpreis: 350000,
                 neukauf: false,
@@ -313,12 +317,17 @@
                         RS = RS - JRT;
                         i++;
                     }
-                    this.tilgungsplan = tilgungsplan;
                     var JR = Math.round((darlehen * (nominal + tilgung)) + 0.00) / 100;
                     var MR = this.FloatNum(MR);
                     var GBE = this.FloatNum(this.darlehen - RS);
                     var GZ = this.FloatNum((MR * zahlungenProJahr) * jahre);
                     var GZZ = this.FloatNum(GZ - GBE);
+
+                    if (GZZ < 0 || RS <= 0) {
+                        throw new Error("Die kalkulierten Zinsen (Davon Zinsen) dürfen nicht negativ werden.");
+                    }
+
+                    this.tilgungsplan = tilgungsplan;
                     this.MR = MR;
                     this.GBE = GBE;
                     if(RS > 0){
@@ -369,6 +378,11 @@
                             console.error('Fehler beim Abrufen von Daten aus dem localStorage', e);
                         }
                     }
+                },
+                copyToClipboard: function() {
+                    localStorage.setItem('store', JSON.stringify(this.$data));
+                    var url = this.baseurl + "?store=" + encodeURIComponent(localStorage.getItem('store'));
+                    navigator.clipboard.writeText(url);
                 },
                 resetData() {
                     Object.assign(this.$data, this.originalData);
@@ -466,7 +480,23 @@
                 }
             },
             mounted() {
-                this.loadFromLocalStorage();
+                // überprüfen Sie, ob es einen 'store' GET Parameter in der URL gibt
+                var urlParams = new URLSearchParams(window.location.search);
+                if(urlParams.has('store')) {
+                    // holen Sie die Daten aus der URL und decodieren Sie sie
+                    var storedData = JSON.parse(decodeURIComponent(urlParams.get('store')));
+
+                    // befüllen Sie das Formular mit den Daten aus der URL
+                    Object.keys(storedData).forEach(key => {
+                        this.$data[key] = storedData[key];
+                    });
+
+                    // führen Sie die Berechnungen aus
+                    this.RR();
+                } else {
+                    // wenn es keinen 'store' GET Parameter in der URL gibt, laden Sie die Daten aus dem localStorage
+                    this.loadFromLocalStorage();
+                }
             }
         });
     </script>
