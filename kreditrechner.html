@@ -270,7 +270,7 @@
                     return this.kaufpreis + this.baureno + grundsteuer + notargericht + makler;
                 },
                 darlehen: function() {
-                    return this.kaufpreis + this.baureno - this.eigenkapital;
+                    return this.gesamtkosten() - this.eigenkapital;
                 },
                 maxSonderzahlungValue: function() {
                     return this.darlehen * this.max_sonderzahlung / 100;
