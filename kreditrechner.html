@@ -382,6 +382,8 @@
                 copyToClipboard: function() {
                     localStorage.setItem('store', JSON.stringify(this.$data));
                     var url = this.baseurl + "?store=" + encodeURIComponent(localStorage.getItem('store'));
+                    console.log(url);
+
                     navigator.clipboard.writeText(url);
                 },
                 resetData() {
