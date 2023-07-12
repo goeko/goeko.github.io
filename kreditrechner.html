@@ -297,7 +297,7 @@
                     var festzinz = jaehrliche_zinsen_nominal + jaehrliche_tilgung;
                     var tilgungsplan = [];
                     var i = 1;
-                    while(i <= (jahre * zahlungenProJahr)){
+                    while(i <= (jahre * zahlungenProJahr) && rest_schuld > 0){
                         jaehrliche_zinsen_nominal = (rest_schuld * (nominal) / zahlungenProJahr) / 100;
                         jaehrliche_tilgung = festzinz - jaehrliche_zinsen_nominal;
                         // Subtrahieren der Sonderzahlung von der Restschuld
