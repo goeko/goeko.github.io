@@ -349,6 +349,16 @@
                 },
                 copyToClipboard: function() {
                     var copyData = this.$data;
+                    delete copyData.gesamtkosten;
+                    delete copyData.darlehen;
+                    delete copyData.jährliche_rate;
+                    delete copyData.monatliche_rate;
+                    delete copyData.getilgter_betrag_zum_ende;
+                    delete copyData.rest_schuld;
+                    delete copyData.bereits_gezahlte_summe;
+                    delete copyData.gezahlte_zinsen;
+
+
                     delete copyData.originalData;
                     delete copyData.tilgungsplan;
                     localStorage.setItem('store', JSON.stringify(copyData));
