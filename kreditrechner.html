@@ -322,10 +322,6 @@
                     var bereits_gezahlte_summe = this.FloatNum((monatliche_rate * zahlungenProJahr) * jahre);
                     var gezahlte_zinsen = this.FloatNum(bereits_gezahlte_summe - getilgter_betrag_zum_ende);
 
-                    if (gezahlte_zinsen < 0 || rest_schuld <= 0) {
-                        throw new Error("Die kalkulierten Zinsen (Davon Zinsen) dürfen nicht negativ werden.");
-                    }
-
                     this.tilgungsplan = tilgungsplan;
                     this.monatliche_rate = monatliche_rate;
                     this.getilgter_betrag_zum_ende = getilgter_betrag_zum_ende;
@@ -343,11 +339,15 @@
                     if (gezahlte_zinsen < 0) {
                         gezahlte_zinsen_el.style.color = 'red';
                         gezahlte_zinsen_el.style.border = '1px solid red';
-                        alert('Die kalkulierten Zinsen (Davon Zinsen) dürfen nicht Negativ werden.')
+                        // alert('Die kalkulierten Zinsen (Davon Zinsen) dürfen nicht Negativ werden.')
                     } else {
                         gezahlte_zinsen_el.style.color = '';
                         gezahlte_zinsen_el.style.border = '';
                     }
+                    if (gezahlte_zinsen < 0 || rest_schuld <= 0) {
+                        throw new Error("Die kalkulierten Zinsen (Davon Zinsen) dürfen nicht negativ werden.");
+                    }
+
                 },
                 FloatNum: function(myFloat) {
                     var myNumber = Math.round(myFloat * 100);
