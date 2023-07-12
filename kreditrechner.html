@@ -348,7 +348,10 @@
                     }
                 },
                 copyToClipboard: function() {
-                    localStorage.setItem('store', JSON.stringify(this.$data));
+                    var copyData = this.$data;
+                    delete copyData.originalData;
+                    delete copyData.tilgungsplan;
+                    localStorage.setItem('store', JSON.stringify(copyData));
                     var url = this.baseurl + "?v=" +( new Date().getTime() )+ "&store=" + encodeURIComponent(localStorage.getItem('store'));
                     console.log(url);
 
