@@ -247,7 +247,7 @@
                 nominal: 3.03,
                 tilgung: 2.67,
                 jahre: 10,
-                max_sonderzahlung: 5, // Beispielwert
+                max_sonderzahlung: 5,
                 sonderzahlungen: Array(30).fill(0),
                 monatliche_rate: 0,
                 getilgter_betrag_zum_ende: 0,
@@ -270,7 +270,8 @@
                     return this.kaufpreis + this.baureno + grundsteuer + notargericht + makler;
                 },
                 darlehen: function() {
-                    return this.gesamtkosten - this.eigenkapital;
+                    var darlehen = this.gesamtkosten - this.eigenkapital;
+                    return this.FloatNum(Math.max(0, darlehen));
                 },
                 maxSonderzahlungValue: function() {
                     return this.darlehen * this.max_sonderzahlung / 100;
@@ -290,18 +291,15 @@
                     var tilgung = this.tilgung;
                     var zahlungenProJahr = 12;
                     var jahre = this.jahre;
-                    var monatliche_rate = this.FloatNum(Math.round((darlehen * (nominal + tilgung) / zahlungenProJahr) + 0.00) / 100);
+                    var monatliche_rate = this.FloatNum((darlehen * (nominal + tilgung) / zahlungenProJahr) / 100);
+                    var festzinz = (darlehen * (nominal + tilgung) / zahlungenProJahr) / 100;
                     var rest_schuld = darlehen;
-                    var jaehrliche_zinsen_nominal = (darlehen * (nominal) / zahlungenProJahr) / 100;
-                    var jaehrliche_tilgung = (darlehen * (tilgung) / zahlungenProJahr) / 100;
-                    var festzinz = jaehrliche_zinsen_nominal + jaehrliche_tilgung;
                     var tilgungsplan = [];
                     var i = 1;
                     while(i <= (jahre * zahlungenProJahr) && rest_schuld > 0){
-                        jaehrliche_zinsen_nominal = (rest_schuld * (nominal) / zahlungenProJahr) / 100;
-                        jaehrliche_tilgung = festzinz - jaehrliche_zinsen_nominal;
-                        // Subtrahieren der Sonderzahlung von der Restschuld
-                        if (i % 12 === 0) { // prüfen, ob das aktuelle Jahr abgeschlossen ist
+                        var jaehrliche_zinsen_nominal = (rest_schuld * (nominal) / zahlungenProJahr) / 100;
+                        var jaehrliche_tilgung = festzinz - jaehrliche_zinsen_nominal;
+                        if (i % 12 === 0) {
                             var jahr = i / 12;
                             if (jahr <= this.sonderzahlungen.length) {
                                 rest_schuld = rest_schuld - this.sonderzahlungen[jahr - 1];
@@ -317,7 +315,7 @@
                         rest_schuld = rest_schuld - jaehrliche_tilgung;
                         i++;
                     }
-                    var jaehrliche_ratenzahlung = Math.round((darlehen * (nominal + tilgung)) + 0.00) / 100;
+                    var jaehrliche_ratenzahlung = this.FloatNum(darlehen * (nominal + tilgung)) / 100;
                     var getilgter_betrag_zum_ende = this.FloatNum(this.darlehen - rest_schuld);
                     var bereits_gezahlte_summe = this.FloatNum((monatliche_rate * zahlungenProJahr) * jahre);
                     var gezahlte_zinsen = this.FloatNum(bereits_gezahlte_summe - getilgter_betrag_zum_ende);
@@ -329,44 +327,13 @@
                     this.tilgungsplan = tilgungsplan;
                     this.monatliche_rate = monatliche_rate;
                     this.getilgter_betrag_zum_ende = getilgter_betrag_zum_ende;
-                    if(rest_schuld > 0){
-                        this.rest_schuld= this.FloatNum(rest_schuld);
-                    } else {
-                        this.getilgter_betrag_zum_ende = this.darlehen;
-                        this.rest_schuld = 0.00;
-
-                    }
+                    this.rest_schuld = this.FloatNum(rest_schuld > 0 ? this.FloatNum(rest_schuld) : 0.00);
                     this.jaehrliche_ratenzahlung = jaehrliche_ratenzahlung;
                     this.bereits_gezahlte_summe = bereits_gezahlte_summe;
                     this.gezahlte_zinsen = gezahlte_zinsen;
-
-                    var gezahlte_zinsen_el = document.querySelectorAll('.gezahlte_zinsen')[0];
-                    if (gezahlte_zinsen < 0) {
-                        gezahlte_zinsen_el.style.color = 'red';
-                        gezahlte_zinsen_el.style.border = '1px solid red';
-                        // alert('Die kalkulierten Zinsen (Davon Zinsen) dürfen nicht Negativ werden.')
-                    } else {
-                        gezahlte_zinsen_el.style.color = '';
-                        gezahlte_zinsen_el.style.border = '';
-                    }
-
                 },
                 FloatNum: function(myFloat) {
-                    var myNumber = Math.round(myFloat * 100);
-                    var myNumber = myNumber / 100;
-                    var myString = "" + parseFloat(myNumber).toFixed(2);
-                    var myZahlenArray = myString.split(".");
-                    if (myZahlenArray.length > 1) {
-                        var VorKomma = myZahlenArray[0];
-                        var NachKomma = myZahlenArray[1];
-                        if (NachKomma.length == 1) {
-                            var NachKomma = NachKomma + "0";
-                        }
-                        var myString = VorKomma + "." + NachKomma;
-                    } else {
-                        var myString = myString + ".00";
-                    }
-                    return myString;
+                    return parseFloat(myFloat).toFixed(2);
                 },
                 loadFromLocalStorage() {
                     if(localStorage.getItem('store')) {
@@ -401,7 +368,7 @@
                     this.RR();
                 },
                 neukauf: function(newValue, oldValue) {
-                    if (!newValue) {  // Wenn neukauf deaktiviert ist
+                    if (!newValue) { // Wenn neukauf deaktiviert ist
                         this.includeGrundsteuer = false;
                         this.includeNotargericht = false;
                         this.includeMakler = false;
@@ -459,7 +426,6 @@
                 includeMakler: function() {
                     this.RR();
                 },
-                // Immer wenn sich der Zustand ändert, speichere ihn in localStorage
                 '$data': {
                   handler: function (val, oldVal) {
                     console.log('store changed');
@@ -472,8 +438,6 @@
                 this.RR();
 
                 this.originalData = {...this.$data};
-                // this.initValuesFromLocalStorage();
-
                 if (localStorage.getItem('store')) {
                   try {
                     this.$data = JSON.parse(localStorage.getItem('store'));
@@ -483,23 +447,15 @@
                 }
             },
             mounted() {
-                // überprüfen Sie, ob es einen 'store' GET Parameter in der URL gibt
                 var urlParams = new URLSearchParams(window.location.search);
                 if(urlParams.has('store')) {
                     localStorage.removeItem('store');
-
-                    // holen Sie die Daten aus der URL und decodieren Sie sie
                     var storedData = JSON.parse(decodeURIComponent(urlParams.get('store')));
-
-                    // befüllen Sie das Formular mit den Daten aus der URL
                     Object.keys(storedData).forEach(key => {
                         this.$data[key] = storedData[key];
                     });
-
-                    // führen Sie die Berechnungen aus
                     this.RR();
                 } else {
-                    // wenn es keinen 'store' GET Parameter in der URL gibt, laden Sie die Daten aus dem localStorage
                     this.loadFromLocalStorage();
                 }
             }
