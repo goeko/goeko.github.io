@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Kreditrechner</title>
+    <script src="./vue@2.js"></script>
 </head>
 <body>
 
@@ -18,30 +19,39 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/vue"></script>
 <script>
     Vue.component('kredit-formular', {
         props: ['formData'],
         template: `
         <form>
-            <div v-for="(value, key) in formData" :key="key">
+            <div v-for="(value, key) in localFormData" :key="key">
                 <label :for="key">{{ key }}</label>
-                <input v-if="typeof value === 'number'" type="number" :id="key" v-model.number="formData[key]">
-                <input v-else-if="typeof value === 'boolean'" type="checkbox" :id="key" v-model="formData[key]">
+                <input v-if="typeof value === 'number'" type="number" :id="key" v-model.number="localFormData[key]">
+                <input v-else-if="typeof value === 'boolean'" type="checkbox" :id="key" v-model="localFormData[key]">
                 <div v-else-if="key === 'sonderzahlungen'">
                     <div v-for="(amount, index) in value" :key="index">
                         <label :for="'sonderzahlung' + index">Jahr {{ index + 1 }}:</label>
-                        <input type="number" :id="'sonderzahlung' + index" v-model.number="formData.sonderzahlungen[index]">
+                        <input type="number" :id="'sonderzahlung' + index" v-model.number="localFormData.sonderzahlungen[index]">
                     </div>
                 </div>
             </div>
         </form>
     `,
+        data: function() {
+            return {
+                localFormData: this.formData,
+            };
+        },
+        watch: {
+            formData: function(newFormData) {
+                this.localFormData = newFormData;
+            },
+        },
         methods: {
             updateFormData() {
-                this.$emit('update', this.formData);
-            }
-        }
+                this.$emit('update', this.localFormData);
+            },
+        },
     });
 
     new Vue({
