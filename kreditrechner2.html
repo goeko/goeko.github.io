@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Kreditrechner</title>
+</head>
+<body>
+
+<div id="app">
+    <kredit-formular :formData="formData" @update="updateFormData"></kredit-formular>
+    <div>
+        <p>Kreditbetrag: {{ kreditbetrag }} €</p>
+        <p>Monatliche Rate: {{ monatlicheRate }} €</p>
+        <p>Gesamtzahlung: {{ gesamtzahlung }} €</p>
+        <p>Zinszahlung: {{ zinszahlung }} €</p>
+        <p>Schlussrate: {{ schlussrate }} €</p>
+        <button @click="berechneSchlussrate">Berechne Schlussrate</button>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script>
+    Vue.component('kredit-formular', {
+        props: ['formData'],
+        template: `
+        <form>
+            <div v-for="(value, key) in formData" :key="key">
+                <label :for="key">{{ key }}</label>
+                <input v-if="typeof value === 'number'" type="number" :id="key" v-model.number="formData[key]">
+                <input v-else-if="typeof value === 'boolean'" type="checkbox" :id="key" v-model="formData[key]">
+                <div v-else-if="key === 'sonderzahlungen'">
+                    <div v-for="(amount, index) in value" :key="index">
+                        <label :for="'sonderzahlung' + index">Jahr {{ index + 1 }}:</label>
+                        <input type="number" :id="'sonderzahlung' + index" v-model.number="formData.sonderzahlungen[index]">
+                    </div>
+                </div>
+            </div>
+        </form>
+    `,
+        methods: {
+            updateFormData() {
+                this.$emit('update', this.formData);
+            }
+        }
+    });
+
+    new Vue({
+        el: '#app',
+        data: {
+            formData: {
+                kaufpreis: 250000,
+                neukauf: false,
+                grundsteuer: 3.5,
+                notargericht: 1.5,
+                makler: 3.57,
+                baureno: 0,
+                eigenkapital: 0,
+                nominal: 3.03,
+                tilgung: 2.67,
+                jahre: 10,
+                max_sonderzahlung: 5,
+                sonderzahlungen: Array(30).fill(0),
+                includeGrundsteuer: false,
+                includeNotargericht: false,
+                includeMakler: false,
+            },
+        },
+        computed: {
+            kreditbetrag: function() {
+                return this.formData.kaufpreis - this.formData.eigenkapital;
+            },
+            monatlicheRate: function() {
+                const zinsfaktor = this.formData.nominal / 100 / 12;
+                const laufzeitInMonaten = this.formData.jahre * 12;
+                const rate = (this.kreditbetrag * zinsfaktor) / (1 - Math.pow(1 + zinsfaktor, -laufzeitInMonaten));
+                return rate.toFixed(2);
+            },
+            gesamtzahlung: function() {
+                return (this.monatlicheRate * this.formData.jahre * 12).toFixed(2);
+            },
+            zinszahlung: function() {
+                return (this.gesamtzahlung - this.kreditbetrag).toFixed(2);
+            },
+            schlussrate: function() {
+                let restschuld = this.kreditbetrag;
+                for (let i = 0; i < this.formData.jahre; i++) {
+                    const zinsen = (restschuld * this.formData.nominal / 100) / 12;
+                    const tilgung = this.monatlicheRate - zinsen;
+                    restschuld -= tilgung * 12;
+                    restschuld -= this.formData.sonderzahlungen[i];
+                }
+                return restschuld.toFixed(2);
+            },
+        },
+        methods: {
+            berechneSchlussrate: function() {
+                alert('Die Schlussrate beträgt: ' + this.schlussrate + ' €');
+            },
+            updateFormData: function(formData) {
+                this.formData = formData;
+            }
+        },
+    });
+</script>
+
+</body>
+</html>
