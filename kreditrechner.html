@@ -347,7 +347,7 @@ table td {
         display: block;
     }
     .sonderzahlungToggler {
-        display: flex;
+        display: inline-block;
         color: black;
         margin-top: 0.5em;
         font-size: 1.25em;
@@ -650,7 +650,7 @@ table td {
                         }
                     }
                 },
-                copyToClipboard: function () {
+                copyToClipboard: async function () {
                     let copyData = this.$data;
                     delete copyData.gesamtkosten;
                     delete copyData.darlehen;
@@ -668,8 +668,13 @@ table td {
                     let url = this.baseurl + "?v=" + (new Date().getTime()) + "&store=" + encodeURIComponent(localStorage.getItem('store'));
                     console.log(url);
 
-                    navigator.clipboard.writeText(url);
-                    alert('Der individuelle Link ist jetzt in der Zwischenablage.');
+                    try {
+                        await navigator.clipboard.writeText(url);
+                        alert('Der individuelle Link ist jetzt in der Zwischenablage.');
+                    } catch (err) {
+                        console.error('Fehler beim Kopieren: ', err);
+                        alert('Fehler beim Kopieren in die Zwischenablage.');
+                    }
                 },
                 calculateEigenkapital() {
                     if (this.neukauf) {
