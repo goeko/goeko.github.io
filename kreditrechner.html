@@ -139,21 +139,39 @@
                 <p>
                     <label for="kaufpreis">Kaufpreis der Immobilie:
                         <label for="neukauf" class="neukauf"><input id="neukauf" v-model="neukauf" type="checkbox"> Neukauf?</label>
-                    </label> <input id="kaufpreis" v-model.number="kaufpreis" type="number" step="1000">
+                    </label>
+                    <number-input v-model.number="kaufpreis" step="1000" min="0"></number-input>
                 </p>
 
                 <fieldset id="neukauf_parameter" v-show="neukauf">
                     <legend>Kosten beim Neukauf</legend>
-                    <p><label for="grundsteuer">Grunderwerbssteuer in % ({{ (kaufpreis / 100 * grundsteuer).toFixed(2) }} €): </label> <input id="grundsteuer" v-model.number="grundsteuer" type="number" :min="0" step="0.01"> <label for="includeGrundsteuer"><input id="includeGrundsteuer" v-model="includeGrundsteuer" type="checkbox"> Inkl.</label></p>
-                    <p><label for="notargericht">Notar- und Gerichtskosten in % ({{ (kaufpreis / 100 * notargericht).toFixed(2) }} €): </label> <input id="notargericht" v-model.number="notargericht" type="number" :min="0" step="0.01"> <label for="includeNotargericht"><input id="includeNotargericht" v-model="includeNotargericht" type="checkbox"> Inkl.</label></p>
-                    <p><label for="makler">Maklerprovision in % ({{ (kaufpreis / 100 * makler).toFixed(2) }} €): </label> <input id="makler" v-model.number="makler" type="number" step="0.01" :min="0" step="0.01"> <label for="includeMakler"><input id="includeMakler" v-model="includeMakler" type="checkbox"> Inkl.</label></p>
+                    <p><label for="grundsteuer">Grunderwerbssteuer in % ({{ (kaufpreis / 100 * grundsteuer).toFixed(2) }} €): </label>
+                        <number-input v-model.number="grundsteuer" step="0.01" min="0"></number-input>
+                        <label for="includeGrundsteuer"><input id="includeGrundsteuer" v-model="includeGrundsteuer" type="checkbox"> Inkl.</label></p>
+                    <p><label for="notargericht">Notar- und Gerichtskosten in % ({{ (kaufpreis / 100 * notargericht).toFixed(2) }} €): </label>
+                        <number-input v-model.number="notargericht" step="0.01" min="0"></number-input>
+                        <label for="includeNotargericht"><input id="includeNotargericht" v-model="includeNotargericht" type="checkbox"> Inkl.</label></p>
+                    <p><label for="makler">Maklerprovision in % ({{ (kaufpreis / 100 * makler).toFixed(2) }} €): </label>
+                        <number-input v-model.number="makler" step="0.01" min="0"></number-input>
+                        <label for="includeMakler"><input id="includeMakler" v-model="includeMakler" type="checkbox">Inkl.</label></p>
                 </fieldset>
-                <p class="baureno-wrapper"><label for="baureno">Bau-/Renovierungskosten: </label> <input id="baureno" v-model.number="baureno" type="number" step="500" :min="0"></p>
-                <p class="eigenkapital-wrapper"><label for="eigenkapital">Eigenkapital <small>(min. Steuern, Notar und Auslagen)</small>: </label> <input id="eigenkapital" v-model.number="eigenkapital" type="number" step="500" :min="0"></p>
+                <p class="baureno-wrapper"><label for="baureno">Bau-/Renovierungskosten: </label>
+                    <number-input v-model.number="baureno" step="500" min="0"></number-input>
+                </p>
+                <p class="eigenkapital-wrapper"><label for="eigenkapital">Eigenkapital <small>(min. Steuern, Notar und Auslagen)</small>: </label>
+                    <number-input v-model.number="eigenkapital" step="500" min="0"></number-input>
+                </p>
                 <hr>
-                <p><label for="nominal">Nominalzinssatz: </label> <input id="nominal" v-model.number="nominal" type="number" step="0.01" :min="0"></p>
-                <p><label for="tilgung">Anfängliche Tilgung in % p.a.: </label> <input id="tilgung" v-model.number="tilgung" type="number" step="0.01" :min="0"></p>
-                <p><label for="jahre">Dauer der Zinsbindung: </label> <input id="jahre" v-model.number="jahre" type="number" step="1" :min="1"></p>
+                <p><label for="nominal">Nominalzinssatz: </label>
+                    <number-input v-model.number="nominal" step="0.01" min="0"></number-input>
+                </p>
+                <p><label for="tilgung">Anfängliche Tilgung in % p.a.: </label>
+<!--                    <input id="tilgung" v-model.number="tilgung" type="number" step="0.01" :min="0">-->
+                    <number-input v-model.number="tilgung" step="0.01" min="0"></number-input>
+                </p>
+                <p><label for="jahre">Dauer der Zinsbindung: </label>
+                    <number-input v-model.number="jahre" step="1" min="1" :max="jahre_max"></number-input>
+                </p>
                 <hr>
                 <p class="gesamtkosten"><label>Gesamtkosten:</label> <span>{{ gesamtkosten }}</span></p>
                 <p class="darlehen"><label>Darlehensbetrag:</label> <span>{{ darlehen }}</span></p>
@@ -253,6 +271,7 @@
                 nominal: 3.03,
                 tilgung: 2.67,
                 jahre: 10,
+                jahre_max: 30,
                 max_sonderzahlung: 5,
                 sonderzahlungen: Array(30).fill(0),
                 monatliche_rate: 0,
@@ -327,6 +346,7 @@
                     var gezahlte_zinsen = this.FloatNum(bereits_gezahlte_summe - getilgter_betrag_zum_ende);
 
                     if (gezahlte_zinsen < 0 || rest_schuld <= 0) {
+                        this.jahre_max = this.jahre - 1;
                         throw new Error("Die kalkulierten Zinsen (Davon Zinsen) dürfen nicht negativ werden.");
                     }
 
@@ -479,6 +499,42 @@
                 }
             }
         });
+        Vue.component('number-input', {
+            props: ['value', 'step', 'min', 'max'],
+            template: `
+        <div>
+            <button @click="decrease">-</button>
+            <input type="number" :value="formattedValue" @input="updateValue($event.target.value)" :step="step" :min="min" :max="max">
+            <button @click="increase">+</button>
+        </div>
+    `,
+            computed: {
+                formattedValue() {
+                    return this.value.toFixed(2);
+                }
+            },
+            methods: {
+                updateValue(newValue) {
+                    newValue = parseFloat(newValue).toFixed(2);
+                    this.$emit('input', newValue);
+                },
+                increase() {
+                    let newValue = (parseFloat(this.value) + parseFloat(this.step)).toFixed(2);
+                    if (this.max !== undefined && newValue > parseFloat(this.max)) {
+                        newValue = this.max;
+                    }
+                    this.$emit('input', newValue);
+                },
+                decrease() {
+                    let newValue = (parseFloat(this.value) - parseFloat(this.step)).toFixed(2);
+                    if (this.min !== undefined && newValue < parseFloat(this.min)) {
+                        newValue = this.min;
+                    }
+                    this.$emit('input', newValue);
+                }
+            }
+        });
+
     </script>
 </body>
 </html>
