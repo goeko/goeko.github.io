@@ -57,6 +57,11 @@ input {
     font-size: var(--highlight-font-size);
     flex-basis: content;
 }
+
+.params>legend button {
+    float: right;
+    margin: 0 0 0 10px;
+}
 div.kaufpreis input{
     font-size: 1.25em;
 }
@@ -196,6 +201,17 @@ table td {
     p {
         flex-direction: column;
         align-items: normal;
+    }
+    .params>legend {
+        display: flex;
+        flex-direction: column;
+    }
+    .params>legend button {
+        float: unset;
+        margin: 0 0 0.5em 0 ;
+    }
+    .params>legend button:first-child {
+        margin-top: 0.5em;
     }
 
     #neukauf_parameter p {
