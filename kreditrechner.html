@@ -345,11 +345,10 @@ table td {
                     <number-input v-model.number="eigenkapital" step="500" min="0"></number-input>
                 </p>
                 <hr>
-                <p><label for="nominal">Nominalzinssatz: </label>
+                <p><label for="nominal">Zinssatz (eff.) in % p.a.: </label>
                     <number-input v-model.number="nominal" step="0.01" min="0"></number-input>
                 </p>
                 <p><label for="tilgung">Anfängliche Tilgung in % p.a.: </label>
-<!--                    <input id="tilgung" v-model.number="tilgung" type="number" step="0.01" :min="0">-->
                     <number-input v-model.number="tilgung" step="0.01" min="0"></number-input>
                 </p>
                 <p><label for="jahre">Dauer der Zinsbindung: </label>
