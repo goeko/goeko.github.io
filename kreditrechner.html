@@ -185,7 +185,7 @@ label.neukauf {
     width: 120px;
 }
 #neukauf_parameter label:last-child {
-    width: 100px;
+    width: 85px;
 
 }
 /*#sonderzahlung_wrapper input {
@@ -364,7 +364,7 @@ table td {
             <fieldset class="params">
                 <legend>Darlehen Parameter
                     <button @click="resetAll">Werte zurücksetzen</button>
-                    <button @click="copyToClipboard">Kopiere Link zum teilen</button>
+                    <button @click="copyToClipboard">individuellen Link in die Zwischenablage</button>
                 </legend>
                 <p>
                     <label for="kaufpreis">Kaufpreis der Immobilie:
@@ -472,7 +472,9 @@ table td {
         </fieldset>
     </div>
     <h2 style="font-size:0.8em; text-align: center;">
-        Entwickelt, bereitgestellt und &copy; copyright by <a href="https://grafix.house" target="_blank">grafix.house&reg;</a> &bull; <a href="https://digitals.direct" target="_blank">digitals.direct&trade;</a>
+        <hr />
+        Entwickelt, bereitgestellt und<br />
+        &copy; copyright by <a href="https://grafix.house" target="_blank">grafix.house&reg;</a> &bull; <a href="https://digitals.direct" target="_blank">digitals.direct&trade;</a>
     </h2>
 
 
@@ -724,8 +726,8 @@ table td {
                     }
                 },
                 resetToDefaultData() {
-                    // Object.assign(this.$data, JSON.parse(localStorage.getItem('originalData')));
-                    this.$data = JSON.parse(localStorage.getItem('originalData'));
+                    this.originalData = JSON.parse(localStorage.getItem('originalData'));
+                    Object.assign(this.$data, this.originalData);
                     this.kaufpreis = this.$data.kaufpreis;
                     this.baureno = this.$data.baureno;
                     this.eigenkapital = this.$data.eigenkapital;
@@ -734,7 +736,6 @@ table td {
                     this.jahre = this.$data.jahre;
                     this.max_sonderzahlung = this.$data.max_sonderzahlung;
                     this.sonderzahlungen = Array(parseInt(this.$data.jahre)).fill(0);
-                    this.RR();
                 },
                 resetAll() {
                     this.resetToDefaultData();
@@ -743,8 +744,12 @@ table td {
                     const url = new URL(window.location.href);
                     url.searchParams.set('v', new Date().getTime());
                     window.history.pushState({}, '', url);
+                    this.RR();
 
-                    alert("Standardwerte wurden wieder hergestellt.")
+                    window.setTimeout(function () {
+                        alert("Standardwerte wurden wieder hergestellt.")
+                    }, 250);
+
                 },
             },
             watch: {
