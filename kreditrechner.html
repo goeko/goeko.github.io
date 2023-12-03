@@ -220,17 +220,53 @@ table td {
         padding: 0.3em 0 0.3em 0.5em;
     }
 
-    #tilgungsplan_wrapper table {
-        display: block;
-        width: 85vw;
-        max-width: 100%;
-        overflow-x: auto;
+    #tilgungsplan_wrapper {
+
     }
 
-    table th, table td {
+    #tilgungsplan_wrapper table {
+        display: block;
+        overflow-x: auto;
+        border-collapse: collapse;
+        max-width: 84.5vw;
+        max-height: 80vh;
+        position: relative;
+        border: none;
+        outline: 1px solid black;
+    }
+
+    #tilgungsplan_wrapper th,
+    #tilgungsplan_wrapper td {
         padding: 8px;
         font-size: 14px;
+        background: white; /* Hintergrund für Sticky-Elemente, um Überlappung zu vermeiden */
     }
+
+    #tilgungsplan_wrapper th {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        background: whitesmoke;
+        font-weight: bold;
+    }
+
+    #tilgungsplan_wrapper th:first-child,
+    #tilgungsplan_wrapper td:first-child {
+        position: sticky;
+        left: 0;
+        z-index: 2;
+        background: whitesmoke;
+        outline: 1px solid black;
+    }
+    #tilgungsplan_wrapper th:last-child,
+    #tilgungsplan_wrapper td:last-child {
+        position: sticky;
+        right: 0;
+        z-index: 2;
+        font-weight: bold;
+        outline: 1px solid black;
+    }
+
 
     .teaser {
         font-size: 14px;
@@ -472,10 +508,14 @@ table td {
                     var bereits_gezahlte_summe = this.FloatNum((monatliche_rate * zahlungenProJahr) * jahre);
                     var gezahlte_zinsen = this.FloatNum(bereits_gezahlte_summe - getilgter_betrag_zum_ende);
 
-                    if (gezahlte_zinsen < 0 || rest_schuld <= 0) {
-                        this.jahre_max = this.jahre;
-                        throw new Error("Die kalkulierten Zinsen (Davon Zinsen) dürfen nicht negativ werden.");
+                    if(rest_schuld <= 0){
+                        // this.jahre_max = parseFloat(i);
                     }
+
+                    //if (rest_schuld <= 0) {
+                    // if (gezahlte_zinsen < 0 || rest_schuld <= 0) {
+                    //     throw new Error("Die kalkulierten Zinsen (Davon Zinsen) dürfen nicht negativ werden.");
+                    // }
 
                     this.tilgungsplan = tilgungsplan;
                     this.monatliche_rate = monatliche_rate;
