@@ -6,7 +6,9 @@
     <meta http-equiv="x-ua-compatible" content="IE=edge" />
     <meta name="apple-mobile-web-app-capable" content="no" />
     <title>goEko's Financial Calculator</title>
+    <script src="./qrcode.min.js"></script>
     <script src="./vue@2.js"></script>
+
 </head>
 <style>
 ::root {
@@ -25,6 +27,15 @@
     margin: 0 10px 10px 0;
     padding: 10px;
     border: 1px solid black;
+}
+#qrcode {
+    position: fixed;
+    right: 0;
+    top: 0;
+    display: inline-block;
+    vertical-align: top;
+    padding-right: 20px; /* Abstand vom Titel */
+    float:left;
 }
 h1 {
     margin-bottom: 0;
@@ -356,6 +367,7 @@ table td {
 
 </style>
 <body>
+    <div id="qrcode"></div>
     <h1>Kreditrechner</h1>
     <h3>für Ratenkredite als Annuitätendarlehen</h3>
     <h4>Darlehens Sondertilgung berücksichtigt</h4>
@@ -364,10 +376,10 @@ table td {
             <fieldset class="params">
                 <legend>Darlehen Parameter
                     <button @click="resetAll">Werte zurücksetzen</button>
-                    <button @click="copyToClipboard">individuellen Link in die Zwischenablage</button>
+                    <button @click="copyToClipboard" title="individuellen Link in die Zwischenablage">Kopiere Link</button>
                 </legend>
                 <p>
-                    <label for="kaufpreis">Kaufpreis der Immobilie:
+                    <label for="kaufpreis" title="Kaufpreis der Immobilie oder Vermögenswert der als Pfand hinterlegt wird">Kaufpreis der Immobilie:
                         <label for="neukauf" class="neukauf"><input id="neukauf" v-model="neukauf" type="checkbox"> Neukauf?</label>
                     </label>
                     <number-input v-model.number="kaufpreis" class="kaufpreis" step="1000" min="0"></number-input>
@@ -467,8 +479,8 @@ table td {
     <div class="teaser">
         <fieldset>
             <p>Die Webseite ist ein Kreditrechner für Ratenkredite als Annuitätendarlehen. Der Benutzer kann verschiedene Parameter eingeben, um die Kreditkonditionen zu berechnen, einschließlich Kaufpreis der Immobilie, Kosten beim Neukauf, Grunderwerbssteuer, Notar- und Gerichtskosten, Maklerprovision, Bau-/Renovierungskosten, Eigenkapital, Nominalzinssatz, anfängliche Tilgung, Dauer der Zinsbindung und mögliche Sondertilgungen. Die Ergebnisse umfassen Gesamtkosten, Darlehensbetrag, jährliche und monatliche Ratenzahlungen, getilgten Betrag bis zum Ende der Zinsbindung, Restschuld am Ende der Zinsbindung, bereits gezahlte Summe, davon Zinsen und mögliche Sonderzahlungen. Es gibt auch einen Tilgungsplan, der die jährlichen Tilgungen, Zinsen, Ausgaben und den getilgten Betrag sowie die Restschuld zeigt.</p>
-            <p>Der Code der Webseite verwendet Vue.js, eine JavaScript-Framework, um die Benutzeroberfläche dynamisch zu gestalten und die Berechnungen durchzuführen. Die Berechnungen werden auf der Client-Seite durchgeführt, und es gibt keine Serverseitige Verarbeitung oder Datenbankinteraktionen.</p>
-            <p>Bite beachten Sie: Dieser Kreditrecher ersetzt nicht eine Finanzberatung und hat keinen Einfluss auf weitere Kosten (z.B. Bereistellungszinsen, Bearbeitungsgebühren, Versicherungen, Bausparer, Auslagen, das Klein-Gedruckte u.s.w.) die bei der Kreditvergabe enstehen können. Wir vergeben keine Kredite und vermitteln diese auch nicht.</p>
+            <p>Der Code der Webseite verwendet Vue.js, ein JavaScript-Framework, um die Benutzeroberfläche dynamisch zu gestalten und die Berechnungen durchzuführen. Die Berechnungen werden auf der Client-Seite durchgeführt, und es gibt keine Serverseitige Verarbeitung oder Datenbankinteraktionen.</p>
+            <p>Bitte beachten Sie: Dieser Kreditrecher ersetzt nicht eine Finanzberatung und hat keinen Einfluss auf weitere Kosten (z.B. Bereistellungszinsen, Bearbeitungsgebühren, Versicherungen, Bausparer, Auslagen, das Klein-Gedruckte u.s.w.) die bei der Kreditvergabe enstehen können. Wir vergeben keine Kredite und vermitteln diese auch nicht.</p>
         </fieldset>
     </div>
     <h2 style="font-size:0.8em; text-align: center;">
@@ -520,7 +532,7 @@ table td {
                 includeMakler: true,
                 */
 
-                kaufpreis: 1000000.00,
+                kaufpreis: 225000.00,
                 neukauf: true,
                 grundsteuer: 3.50,
                 notargericht: 1.5,
@@ -581,6 +593,24 @@ table td {
                 },
             },
             methods: {
+                generateQRCode(url) {
+                    // let url = this.baseurl + "?v=" + (new Date().getTime()) + "&store=" + encodeURIComponent(localStorage.getItem('store'));
+
+                    this.$nextTick(() => {
+                        let qrcodeContainer = this.$refs.qrcode;
+                        if (qrcodeContainer) {
+                            qrcodeContainer.innerHTML = "";
+                            new QRCode(qrcodeContainer, {
+                                text: url,
+                                width: 128,
+                                height: 128,
+                                colorDark: "#000000",
+                                colorLight: "#ffffff"
+                            });
+                        }
+                    });
+                },
+
                 RR: function () {
                     let darlehen = this.darlehen;
                     let nominal = this.nominal;
@@ -667,13 +697,26 @@ table td {
                     localStorage.setItem('store', JSON.stringify(copyData));
                     let url = this.baseurl + "?v=" + (new Date().getTime()) + "&store=" + encodeURIComponent(localStorage.getItem('store'));
                     console.log(url);
+                    this.generateQRCode(url);
 
                     try {
                         await navigator.clipboard.writeText(url);
-                        alert('Der individuelle Link ist jetzt in der Zwischenablage.');
+                        alert('Der individuelle Link ist jetzt in der Zwischenablage.\n\n'+localStorage.getItem('store'));
                     } catch (err) {
                         console.error('Fehler beim Kopieren: ', err);
-                        alert('Fehler beim Kopieren in die Zwischenablage.');
+                        // Fallback-Mechanismus
+                        let textArea = document.createElement("textarea");
+                        textArea.value = url;
+                        document.body.appendChild(textArea);
+                        textArea.focus();
+                        textArea.select();
+                        try {
+                            document.execCommand('copy');
+                            alert('Der individuelle Link ist jetzt in der Zwischenablage.\n\n'+localStorage.getItem('store'));
+                        } catch (err) {
+                            console.error('Fallback-Methode fehlgeschlagen', err);
+                        }
+                        document.body.removeChild(textArea);
                     }
                 },
                 calculateEigenkapital() {
@@ -968,5 +1011,6 @@ table td {
 
 
 </script>
+
 </body>
 </html>
