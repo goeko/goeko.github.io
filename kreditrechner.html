@@ -1,131 +1,244 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>goEko's Financial Calculator</title>
     <script src="./vue@2.js"></script>
 </head>
 <style>
-        ::root {
-            --highlight-font-size: 1.2em;
-        }
-        * {
-          font-family: Arial, Helvetica, sans-serif;
-        }
-        #app {
-            display: flex;
-            flex-direction: row;
-            flex-wrap: wrap;
-        }
-        #app > * {
-            flex: 1 1 300px;
-            margin: 0 10px 10px 0;
-            padding: 10px;
-            border: 1px solid black;
-        }
-        fieldset {
-            border: none;
-            padding: 0;
-        }
-        legend {
-            display: block;
-            width: 100%;
-            padding: 0 0.5em 0.5em 0;
-            margin-bottom: 0.75em;
-            border-bottom: 1px solid black;
-        }
-        p {
-            margin: 0 0 10px 0;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            align-content: center;
-        }
-        legend {
-            font-weight: bold;
-        }
-        label {
-            display: inline-block;
-            width: 350px;
-        }
-        input {
-            width: 120px;
-            text-align: right;
-            font-size: var(--highlight-font-size);
-            flex-basis: content;
-        }
-        input[type="checkbox"] {
-            width: auto;
-            margin: 0 10px 0 20px;
-        }
-        span {
-            display: block;
-            width: 175px;
-            font-weight: bold;
-            text-align: right;
-        }
-        span::after {
-            content: " €";
-        }
-        p.darlehen {
-            color: blue;
-            font-size: var(--highlight-font-size);
-        }
-        p.rest_schuld {
-            color: red;
-            font-size: var(--highlight-font-size);
-        }
-        p.monatliche_rate {
-            color: green;
-            font-size: var(--highlight-font-size);
-        }
-        input[type="number"]{
-            padding: 0.1em 0 0.1em 0.5em;
-        }
-        input[type="number"]::-webkit-inner-spin-button,
-        input[type="number"]::-webkit-outer-spin-button {
-            transform: scale(1.25) translateX(2px);
-        }
-        #neukauf_parameter {
-            display: flex;
-            flex-direction: column;
-            flex-wrap: wrap;
-            flex: 1 1 300px;
-            /*padding: 1em 0 0;*/
-            margin: 0 0 0.75em;
-            border: none;
-            border-top: 1px solid black;
-        }
-        label.neukauf {
-            width: 120px;
-        }
-        #neukauf_parameter label:last-child {
-            width: 100px;
+::root {
+    --highlight-font-size: 1.2em;
+}
+* {
+  font-family: Arial, Helvetica, sans-serif;
+}
+#app {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+#app > * {
+    flex: 1 1 300px;
+    margin: 0 10px 10px 0;
+    padding: 10px;
+    border: 1px solid black;
+}
+fieldset {
+    border: none;
+    padding: 0;
+}
+legend {
+    display: block;
+    width: 100%;
+    padding: 0 0.5em 0.5em 0;
+    margin-bottom: 0.75em;
+    border-bottom: 1px solid black;
+}
+p {
+    margin: 0 0 10px 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    align-content: center;
+}
+legend {
+    font-weight: bold;
+}
+label {
+    display: inline-block;
+    width: 350px;
+}
+input {
+    width: 100px;
+    text-align: right;
+    font-size: var(--highlight-font-size);
+    flex-basis: content;
+}
+div.kaufpreis input{
+    font-size: 1.25em;
+}
+input[type="number"] {
+    width: 130px;
+    border-radius: 0;
+    border: 1px solid black;
+    flex-grow: 2;
+}
+.number_wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    align-content: center;
+}
 
-        }
-        #sonderzahlung_wrapper input {
-            width: 11em !important;
-            min-width: 11em !important;
-        }
-        table {
-            border-collapse: collapse;
-            border: 1px solid black;
-        }
-        table th {
-            font-weight: bold;
-        }
-        table th,
-        table td {
-            border: 1px solid black;
-            padding: 0.2em 0.75em;
-            text-align: right;
-        }
-        .baureno-wrapper {
-            padding-top: 0.75em;
-            border-top: 1px solid black;
-        }
-        .teaser { font-size:small; }
-    </style>
+.number_wrapper button {
+    width: 32px;
+    min-width: 32px;
+    height: 33px;
+    padding: 0;
+    line-height: 30px;
+    text-align: center;
+    font-size: 24px;
+}
+
+.number_wrapper input[type="number"] {
+    flex-grow: 1;
+}
+
+.decrease {
+    border:1px solid black;
+    border-right: none;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.increase {
+    border:1px solid black;
+    border-left: none;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+input[type="checkbox"] {
+    width: auto;
+    margin: 0 10px 0 20px;
+}
+span {
+    display: block;
+    width: 175px;
+    font-weight: bold;
+    text-align: right;
+}
+span::after {
+    content: " €";
+}
+p.darlehen {
+    color: blue;
+    font-size: var(--highlight-font-size);
+}
+p.rest_schuld {
+    color: red;
+    font-size: var(--highlight-font-size);
+}
+p.monatliche_rate {
+    color: green;
+    font-size: var(--highlight-font-size);
+}
+input[type="number"]{
+    padding: 0.1em 0 0.1em 0.5em;
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    transform: scale(1.25) translateX(2px);
+}
+#neukauf_parameter {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    flex: 1 1 300px;
+    /*padding: 1em 0 0;*/
+    margin: 0 0 0.75em;
+    border: none;
+    border-top: 1px solid black;
+}
+label.neukauf {
+    width: 120px;
+}
+#neukauf_parameter label:last-child {
+    width: 100px;
+
+}
+/*#sonderzahlung_wrapper input {
+    width: 11em !important;
+    min-width: 11em !important;
+}*/
+table {
+    border-collapse: collapse;
+    border: 1px solid black;
+}
+table th {
+    font-weight: bold;
+}
+table th,
+table td {
+    border: 1px solid black;
+    padding: 0.2em 0.75em;
+    text-align: right;
+}
+.baureno-wrapper {
+    padding-top: 0.75em;
+    border-top: 1px solid black;
+}
+.teaser { font-size:small; }
+
+@media screen and (max-width: 600px) {
+    body {
+        font-size: 14px;
+    }
+
+    body > * {
+        max-width: 100%;
+    }
+
+    #app > * {
+        flex: 1 1 auto;
+        margin: 10px;
+    }
+
+    label, span {
+        width: auto;
+        text-align: left;
+        padding-bottom: 0.5em;
+    }
+
+    p {
+        flex-direction: column;
+        align-items: normal;
+    }
+
+    #neukauf_parameter p {
+        flex-direction: row;
+        align-items: center;
+        justify-content: start;
+        flex-wrap: wrap;
+    }
+
+    .number_wrapper {
+        flex-direction: row;
+        flex-wrap: nowrap;
+        max-width: 60%;
+        align-items: stretch;
+    }
+
+    .number_wrapper label:first-child {
+        width: 100%;
+        order: -1; /* Setzt das Label an den Anfang des .number_wrapper */
+    }
+    .number_wrapper input {
+        text-align: left;
+        padding: 0.3em 0 0.3em 0.5em;
+    }
+
+    #tilgungsplan_wrapper table {
+        display: block;
+        width: 85vw;
+        max-width: 100%;
+        overflow-x: auto;
+    }
+
+    table th, table td {
+        padding: 8px;
+        font-size: 14px;
+    }
+
+    .teaser {
+        font-size: 14px;
+    }
+
+}
+
+</style>
 <body>
     <h1>Kreditrechner für Ratenkredite als Annuitätendarlehen</h1>
     <p>Vereinbarte Darlehens Sondertilgung berücksichtigt</p>
@@ -140,7 +253,7 @@
                     <label for="kaufpreis">Kaufpreis der Immobilie:
                         <label for="neukauf" class="neukauf"><input id="neukauf" v-model="neukauf" type="checkbox"> Neukauf?</label>
                     </label>
-                    <number-input v-model.number="kaufpreis" step="1000" min="0"></number-input>
+                    <number-input v-model.number="kaufpreis" class="kaufpreis" step="1000" min="0"></number-input>
                 </p>
 
                 <fieldset id="neukauf_parameter" v-show="neukauf">
@@ -175,7 +288,7 @@
                 <hr>
                 <p class="gesamtkosten"><label>Gesamtkosten:</label> <span>{{ gesamtkosten }}</span></p>
                 <p class="darlehen"><label>Darlehensbetrag:</label> <span>{{ darlehen }}</span></p>
-                <p class="jaehrliche_ratenzahlung"><label>Jährliche Ratenzahlung nominal:</label> <span>{{ jaehrliche_ratenzahlung }}</span></p>
+                <p class="jaehrliche_ratenzahlung"><label>Jährliche Ratenzahlung nominal:</label> <span>{{ parseFloat(jaehrliche_ratenzahlung).toFixed(2) }}</span></p>
                 <p class="monatliche_rate"><label>Monatliche Ratenzahlung nominal:</label> <span>{{ monatliche_rate }}</span></p>
                 <p class="getilgter_betrag_zum_ende"><label>Getilgter Betrag <small>(bis zum Ende der Zinsbindung)</small>:</label> <span>{{ getilgter_betrag_zum_ende }}</span></p>
                 <p class="rest_schuld"><label>Restschuld <small>(am Ende der Zinsbindung)</small>:</label> <span>{{ rest_schuld }}</span></p>
@@ -188,11 +301,18 @@
         <div>
             <fieldset id="sonderzahlung_wrapper">
                 <legend>Sonderzahlungen ({{jahre}} Jahre)</legend>
-                <p><label for="max_sonderzahlung">Max. Sonderzahlung in % je p.a. ({{ Number(darlehen / 100 * max_sonderzahlung).toFixed(2) }} €): </label> <input id="max_sonderzahlung" v-model.number="max_sonderzahlung" type="number" step="0.01"></p>
+                <p><label for="max_sonderzahlung">Max. Sonderzahlung in % je p.a. ({{ Number(darlehen / 100 * max_sonderzahlung).toFixed(2) }} €): </label>
+                    <number-input v-model.number="max_sonderzahlung" step="0.01" min="1"></number-input>
+                </p>
                 <hr>
-                <p v-for="index in jahre" :key="index">
-                    <label :for="'sonderzahlung' + index">Sonderzahlung Jahr {{ index }}: </label>
-                    <input :id="'sonderzahlung' + index" v-model.number="sonderzahlungen[index - 1]" type="number" :max="maxSonderzahlungValue" :min="0" step="500">
+                <p v-for="(zahlung, index) in sonderzahlungen" :key="index">
+                    <label :for="'sonderzahlung' + (index + 1)">Sonderzahlung Jahr {{ index + 1 }}: </label>
+                    <number-input
+                            v-model.number="sonderzahlungen[index]"
+                            :step="500"
+                            :min="0"
+                            :max="maxSonderzahlungValue">
+                    </number-input>
                 </p>
             </fieldset>
         </div>
@@ -261,19 +381,19 @@
                 includeNotargericht: true,
                 includeMakler: true,
                 */
-                kaufpreis: 180000,
-                neukauf: true,
-                grundsteuer: 3.5,
+                kaufpreis: 224520.46,
+                neukauf: false,
+                grundsteuer: 3.50,
                 notargericht: 1.5,
                 makler: 3.57,
                 baureno: 0,
                 eigenkapital: 0,
-                nominal: 3.03,
-                tilgung: 2.67,
+                nominal: 4.27, // nominal 4.19 effektiv 4.27
+                tilgung: 4.89,
                 jahre: 10,
                 jahre_max: 30,
                 max_sonderzahlung: 5,
-                sonderzahlungen: Array(30).fill(0),
+                sonderzahlungen: [],
                 monatliche_rate: 0,
                 getilgter_betrag_zum_ende: 0,
                 rest_schuld: 0,
@@ -289,17 +409,24 @@
             },
             computed: {
                 gesamtkosten: function() {
-                    var grundsteuer = this.includeGrundsteuer ? this.kaufpreis * this.grundsteuer / 100 : 0;
-                    var notargericht = this.includeNotargericht ? this.kaufpreis * this.notargericht / 100 : 0;
-                    var makler = this.includeMakler ? this.kaufpreis * this.makler / 100 : 0;
-                    return this.kaufpreis + this.baureno + grundsteuer + notargericht + makler;
+                    return this.calculateTotalCosts();
                 },
                 darlehen: function() {
                     var darlehen = this.gesamtkosten - this.eigenkapital;
                     return this.FloatNum(Math.max(0, darlehen));
                 },
+                eigenkapital: function() {
+                    if (this.neukauf) {
+                        let grundsteuerBetrag = this.includeGrundsteuer ? this.kaufpreis * this.grundsteuer / 100 : 0;
+                        let notargerichtBetrag = this.includeNotargericht ? this.kaufpreis * this.notargericht / 100 : 0;
+                        let maklerBetrag = this.includeMakler ? this.kaufpreis * this.makler / 100 : 0;
+                        return (grundsteuerBetrag + notargerichtBetrag + maklerBetrag).toFixed(2);
+                    }
+                    return 0;
+                },
                 maxSonderzahlungValue: function() {
-                    return this.darlehen * this.max_sonderzahlung / 100;
+                    // return this.darlehen * this.max_sonderzahlung / 100;
+                    return Number(this.darlehen / 100 * this.max_sonderzahlung).toFixed(2);
                 },
                 bereits_gezahlte_summe: function() {
                     var monatliche_rate = this.monatliche_rate;
@@ -346,7 +473,7 @@
                     var gezahlte_zinsen = this.FloatNum(bereits_gezahlte_summe - getilgter_betrag_zum_ende);
 
                     if (gezahlte_zinsen < 0 || rest_schuld <= 0) {
-                        this.jahre_max = this.jahre - 1;
+                        this.jahre_max = this.jahre;
                         throw new Error("Die kalkulierten Zinsen (Davon Zinsen) dürfen nicht negativ werden.");
                     }
 
@@ -399,37 +526,71 @@
                 resetAll() {
                     localStorage.removeItem('store');
                     this.resetData();
-                    window.location.reload(true);
-                }
+
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('v', new Date().getTime());
+
+                    window.history.pushState({}, '', url);
+                },
+                calculateEigenkapital() {
+                    if (this.neukauf) {
+                        const grundsteuerBetrag = this.kaufpreis * this.grundsteuer / 100;
+                        const notargerichtBetrag = this.kaufpreis * this.notargericht / 100;
+                        const maklerBetrag = this.kaufpreis * this.makler / 100;
+
+                        let eigenkapital_summe = 0;
+                        if (this.includeGrundsteuer === true) {
+                            eigenkapital_summe += parseFloat(grundsteuerBetrag);
+                        }
+                        if (this.includeNotargericht === true) {
+                            eigenkapital_summe += parseFloat(notargerichtBetrag);
+                        }
+                        if (this.includeMakler === true) {
+                            eigenkapital_summe += parseFloat(maklerBetrag);
+                        }
+                        this.eigenkapital = eigenkapital_summe.toFixed(2);
+                    } else {
+                        this.eigenkapital = 0;
+                    }
+                },
+                initSonderzahlungen() {
+                    this.sonderzahlungen = Array(parseInt(this.jahre)).fill(0);
+                },
+                calculateTotalCosts() {
+                    // Kaufnebenkosten
+                    let kaufnebenkosten = 0;
+                    if (this.neukauf) {
+                        kaufnebenkosten += this.includeGrundsteuer ? this.kaufpreis * this.grundsteuer / 100 : 0;
+                        kaufnebenkosten += this.includeNotargericht ? this.kaufpreis * this.notargericht / 100 : 0;
+                        kaufnebenkosten += this.includeMakler ? this.kaufpreis * this.makler / 100 : 0;
+                    }
+                    return this.roundToTwo(this.kaufpreis + this.baureno + kaufnebenkosten);
+                },
+                roundToTwo(num) {
+                    return +(Math.round(num + "e+2")  + "e-2");
+                },
             },
             watch: {
-                kaufpreis: function() {
+                kaufpreis() {
+                    this.calculateEigenkapital();
                     this.RR();
                 },
-                neukauf: function(newValue, oldValue) {
-                    if (!newValue) { // Wenn neukauf deaktiviert ist
-                        this.includeGrundsteuer = false;
-                        this.includeNotargericht = false;
-                        this.includeMakler = false;
-                    } else {
-                        this.includeGrundsteuer = true;
-                        this.includeNotargericht = true;
-                        this.includeMakler = true;
+                grundsteuer() {
+                    this.calculateEigenkapital();
+                    this.RR();
+                },
+                notargericht() {
+                    this.calculateEigenkapital();
+                    this.RR();
+                },
+                makler() {
+                    this.calculateEigenkapital();
+                    this.RR();
+                },
+                neukauf(newValue, oldValue) {
+                    if (newValue !== oldValue || newValue) {
+                        this.calculateEigenkapital();
                     }
-                    if (newValue !== oldValue) {
-                        var grundsteuer = (this.includeGrundsteuer == true) ? this.grundsteuer : 0;
-                        var notargericht = (this.includeNotargericht == true) ? this.notargericht : 0;
-                        var makler = (this.includeMakler == true) ? this.makler : 0;
-                        this.eigenkapital = (this.kaufpreis / 100 * (grundsteuer + notargericht + makler)).toFixed(2)
-                    }
-                },
-                grundsteuer: function() {
-                    this.RR();
-                },
-                notargericht: function() {
-                    this.RR();
-                },
-                makler: function() {
                     this.RR();
                 },
                 baureno: function() {
@@ -444,7 +605,14 @@
                 tilgung: function() {
                     this.RR();
                 },
-                jahre: function() {
+                jahre(newValue) {
+                    newValue = parseInt(newValue); // Sicherstellen, dass 'jahre' eine Ganzzahl ist
+                    if (newValue > this.jahre_max) {
+                        this.jahre = this.jahre_max;
+                    } else {
+                        this.jahre = newValue; // Zuweisung des Ganzzahlwerts an 'jahre'
+                    }
+                    this.initSonderzahlungen();
                     this.RR();
                 },
                 max_sonderzahlung: function() {
@@ -457,12 +625,15 @@
                     deep: true
                 },
                 includeGrundsteuer: function() {
+                    this.calculateEigenkapital();
                     this.RR();
                 },
                 includeNotargericht: function() {
+                    this.calculateEigenkapital();
                     this.RR();
                 },
                 includeMakler: function() {
+                    this.calculateEigenkapital();
                     this.RR();
                 },
                 '$data': {
@@ -475,7 +646,7 @@
             },
             created: function() {
                 this.RR();
-
+                this.initSonderzahlungen();
                 this.originalData = {...this.$data};
                 if (localStorage.getItem('store')) {
                   try {
@@ -499,41 +670,122 @@
                 }
             }
         });
+
         Vue.component('number-input', {
             props: ['value', 'step', 'min', 'max'],
+            inheritAttrs: false,
             template: `
-        <div>
-            <button @click="decrease">-</button>
-            <input type="number" :value="formattedValue" @input="updateValue($event.target.value)" :step="step" :min="min" :max="max">
-            <button @click="increase">+</button>
+        <div :class="['number_wrapper', $attrs.class]">
+            <button class="decrease"
+                    @click="decrease"
+                    @mousedown="startChange('decrease')"
+                    @mouseup="stopChange"
+                    @mouseleave="stopChange"
+                    @touchstart="startChange('decrease')"
+                    @touchend="stopChange"
+                    @keydown="handleButtonKeyDown"
+                    title="Minus (-), Pfeil nach unten">
+                -
+            </button>
+            <input type="number" :value="displayValue"
+               @input="updateValue($event.target.value)"
+               @blur="formatValue"
+               @keydown="handleInputKeyDown"
+               :step="step" :min="min" :max="max">
+            <button class="increase"
+                    @click="increase"
+                    @mousedown="startChange('increase')"
+                    @mouseup="stopChange"
+                    @mouseleave="stopChange"
+                    @touchstart="startChange('increase')"
+                    @touchend="stopChange"
+                    @keydown="handleButtonKeyDown"
+                    title="Plus (+), Pfeil nach oben">
+                +
+            </button>
         </div>
     `,
+            data() {
+                return {
+                    editing: false,
+                    intervalId: null,
+                    clickTimeoutId: null
+                };
+            },
             computed: {
                 formattedValue() {
-                    return this.value.toFixed(2);
+                    return parseFloat(this.value).toFixed(2);
+                },
+                displayValue() {
+                    if (this.editing) {
+                        return this.value;
+                    } else {
+                        return parseFloat(this.value).toFixed(2);
+                    }
                 }
             },
             methods: {
                 updateValue(newValue) {
-                    newValue = parseFloat(newValue).toFixed(2);
+                    this.editing = true;
                     this.$emit('input', newValue);
+                },
+                formatValue() {
+                    this.editing = false;
+                    this.$emit('input', parseFloat(this.value).toFixed(2));
                 },
                 increase() {
-                    let newValue = (parseFloat(this.value) + parseFloat(this.step)).toFixed(2);
+                    let newValue = parseFloat(this.value) + parseFloat(this.step);
                     if (this.max !== undefined && newValue > parseFloat(this.max)) {
-                        newValue = this.max;
+                        newValue = parseFloat(this.max);
                     }
-                    this.$emit('input', newValue);
+                    this.$emit('input', newValue.toFixed(2));
                 },
                 decrease() {
-                    let newValue = (parseFloat(this.value) - parseFloat(this.step)).toFixed(2);
+                    let newValue = parseFloat(this.value) - parseFloat(this.step);
                     if (this.min !== undefined && newValue < parseFloat(this.min)) {
-                        newValue = this.min;
+                        newValue = parseFloat(this.min);
                     }
-                    this.$emit('input', newValue);
+                    this.$emit('input', newValue.toFixed(2));
+                },
+                startChange(direction) {
+                    this.stopChange();
+                    this.clickTimeoutId = setTimeout(() => {
+                        if (direction === 'increase') {
+                            this.intervalId = setInterval(this.increase, 200);
+                        } else {
+                            this.intervalId = setInterval(this.decrease, 200);
+                        }
+                    }, 200);
+                },
+                stopChange() {
+                    clearInterval(this.intervalId);
+                    clearTimeout(this.clickTimeoutId);
+                },
+                handleButtonKeyDown(event) {
+                    if (event.key === 'ArrowDown' || event.key === '-') {
+                        this.decrease();
+                        event.preventDefault();
+                    } else if (event.key === 'ArrowUp' || event.key === '+') {
+                        this.increase();
+                        event.preventDefault();
+                    }
+                },
+                handleInputKeyDown(event) {
+                    if (event.key === 'ArrowLeft') {
+                        this.decrease();
+                    } else if (event.key === 'ArrowRight') {
+                        this.increase();
+                    } else if (event.key === 'ArrowDown' || event.key === '-') {
+                        this.decrease();
+                        event.preventDefault();
+                    } else if (event.key === 'ArrowUp' || event.key === '+') {
+                        this.increase();
+                        event.preventDefault();
+                    }
                 }
             }
         });
+
 
     </script>
 </body>
