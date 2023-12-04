@@ -459,7 +459,7 @@ table td {
                     <number-input v-model.number="jahre" step="1" min="1" :max="jahre_max"></number-input>
                 </p>
                 <hr>
-                <p class="gesamtkosten"><label>Gesamtkosten:</label> <span>{{ gesamtkosten }}</span></p>
+                <p class="gesamtkosten"><label>Gesamtkosten:</label> <span>{{ parseFloat(gesamtkosten).toFixed(2) }}</span></p>
                 <p class="darlehen"><label>Darlehensbetrag:</label> <span>{{ darlehen }}</span></p>
                 <p class="jaehrliche_ratenzahlung"><label>Jährliche Ratenzahlung:</label> <span>{{ parseFloat(jaehrliche_ratenzahlung).toFixed(2) }}</span></p>
                 <p class="monatliche_rate"><label>Monatliche Ratenzahlung:</label> <span>{{ monatliche_rate }}</span></p>
