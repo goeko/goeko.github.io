@@ -427,13 +427,13 @@ table td {
 
                 <fieldset id="neukauf_parameter" v-show="neukauf">
                     <legend>Kosten beim Neukauf</legend>
-                    <p><label for="grundsteuer">Grunderwerbssteuer in % ({{ (kaufpreis / 100 * grundsteuer).toFixed(2) }} €): </label>
+                    <p><label for="grundsteuer">Grunderwerbssteuer <small>in % ({{ (kaufpreis / 100 * grundsteuer).toFixed(2) }} €)</small>: </label>
                         <number-input v-model.number="grundsteuer" step="0.01" min="0"></number-input>
                         <label for="includeGrundsteuer"><input id="includeGrundsteuer" v-model="includeGrundsteuer" type="checkbox"> Inkl.</label></p>
-                    <p><label for="notargericht">Notar- und Gerichtskosten in % ({{ (kaufpreis / 100 * notargericht).toFixed(2) }} €): </label>
+                    <p><label for="notargericht">Notar- und Gerichtskosten <small>in % ({{ (kaufpreis / 100 * notargericht).toFixed(2) }} €)</small>: </label>
                         <number-input v-model.number="notargericht" step="0.01" min="0"></number-input>
                         <label for="includeNotargericht"><input id="includeNotargericht" v-model="includeNotargericht" type="checkbox"> Inkl.</label></p>
-                    <p><label for="makler">Maklerprovision in % ({{ (kaufpreis / 100 * makler).toFixed(2) }} €): </label>
+                    <p><label for="makler">Maklerprovision <small>in % ({{ (kaufpreis / 100 * makler).toFixed(2) }} €)</small>: </label>
                         <number-input v-model.number="makler" step="0.01" min="0"></number-input>
                         <label for="includeMakler"><input id="includeMakler" v-model="includeMakler" type="checkbox">Inkl.</label></p>
                 </fieldset>
@@ -469,7 +469,7 @@ table td {
         <div>
             <fieldset id="sonderzahlung_wrapper">
                 <legend>Sonderzahlungen ({{jahre}} Jahre)</legend>
-                <p class="max_sonderzahlung"><label for="max_sonderzahlung">Max. Sonderzahlung in % je p.a. ({{ Number(darlehen / 100 * max_sonderzahlung).toFixed(2) }} €): </label>
+                <p class="max_sonderzahlung"><label for="max_sonderzahlung">Max. Sonderzahlung <small>in % je p.a. ({{ Number(darlehen / 100 * max_sonderzahlung).toFixed(2) }} €)</small>: </label>
                     <number-input v-model.number="max_sonderzahlung" step="0.01" min="1"></number-input>
                     <button @click="toggleClass" class="sonderzahlungToggler">Sonderzahlungen öffnen</button>
                 </p>
