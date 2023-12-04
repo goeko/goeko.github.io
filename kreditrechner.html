@@ -236,7 +236,9 @@ label.neukauf {
     flex-wrap: nowrap;
 }
 #neukauf_parameter label:last-child {
-    width: 85px;
+    display: flex;
+    flex-direction: row;
+    margin-left: 20px;
 
 }
 /*#sonderzahlung_wrapper input {
@@ -444,10 +446,10 @@ table td {
                     <number-input v-model.number="eigenkapital" step="500" min="0"></number-input>
                 </p>
                 <hr>
-                <p><label for="nominal">Zinssatz (eff.) in % p.a.: </label>
+                <p><label for="nominal">Zinssatz <small>in % p.a.</small>: </label>
                     <number-input v-model.number="nominal" step="0.01" min="0"></number-input>
                 </p>
-                <p><label for="tilgung">Anfängliche Tilgung in % p.a.: </label>
+                <p><label for="tilgung">Anfängliche Tilgung <small>in % p.a.</small>: </label>
                     <number-input v-model.number="tilgung" step="0.01" min="0"></number-input>
                 </p>
                 <p><label for="jahre">Dauer der Zinsbindung<strong v-if="showMaxJahre"> (max. {{ jahre_max }} Jahre)</strong>:</label>
