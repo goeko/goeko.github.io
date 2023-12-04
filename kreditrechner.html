@@ -34,8 +34,15 @@
     top: 0;
     display: inline-block;
     vertical-align: top;
-    padding-right: 20px; /* Abstand vom Titel */
+    padding: 25px;
     float:left;
+    margin: 1em;
+    background: transparent;
+    border: 0;
+}
+#qrcode.on {
+    background: white;
+    border: 1px solid black;
 }
 h1 {
     margin-bottom: 0;
@@ -594,16 +601,19 @@ table td {
             },
             methods: {
                 generateQRCode(url) {
-                    // let url = this.baseurl + "?v=" + (new Date().getTime()) + "&store=" + encodeURIComponent(localStorage.getItem('store'));
-
+                    if (!url) {
+                        url = this.baseurl + "?v=" + (new Date().getTime()) + "&store=" + encodeURIComponent(localStorage.getItem('store'));
+                    }
                     this.$nextTick(() => {
-                        let qrcodeContainer = this.$refs.qrcode;
+                        //let qrcodeContainer = this.$refs.qrcode; // useable if in #app
+                        let qrcodeContainer = document.getElementById('qrcode');
                         if (qrcodeContainer) {
+                            qrcodeContainer.classList.add('on');
                             qrcodeContainer.innerHTML = "";
                             new QRCode(qrcodeContainer, {
                                 text: url,
-                                width: 128,
-                                height: 128,
+                                width: 300,
+                                height: 300,
                                 colorDark: "#000000",
                                 colorLight: "#ffffff"
                             });
@@ -664,6 +674,8 @@ table td {
                     this.jaehrliche_ratenzahlung = jaehrliche_ratenzahlung;
                     this.bereits_gezahlte_summe = bereits_gezahlte_summe;
                     this.gezahlte_zinsen = gezahlte_zinsen;
+
+                    // this.generateQRCode();
                 },
                 FloatNum: function (myFloat) {
                     return parseFloat(myFloat).toFixed(2);
@@ -697,8 +709,7 @@ table td {
                     localStorage.setItem('store', JSON.stringify(copyData));
                     let url = this.baseurl + "?v=" + (new Date().getTime()) + "&store=" + encodeURIComponent(localStorage.getItem('store'));
                     console.log(url);
-                    this.generateQRCode(url);
-
+                    this.generateQRCode();
                     try {
                         await navigator.clipboard.writeText(url);
                         alert('Der individuelle Link ist jetzt in der Zwischenablage.\n\n'+localStorage.getItem('store'));
@@ -878,6 +889,11 @@ table td {
                 this.originalData = Object.assign({}, this.$data);
                 localStorage.setItem('originalData', JSON.stringify(this.originalData));
                 this.loadInitialData();
+                let qrcodeContainer = document.getElementById('qrcode');
+                qrcodeContainer.addEventListener('click', () => {
+                    qrcodeContainer.classList.remove('on');
+                    qrcodeContainer.innerHTML = '';
+                });
             },
             mounted() {
                 let urlParams = new URLSearchParams(window.location.search);
