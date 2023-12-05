@@ -313,10 +313,71 @@ table td {
     }
 
     label.neukauf {
-        width: 120px;
+        width: 100%;
     }
-    #neukauf_parameter label:last-child {
-        width: 85px;
+    label.neukauf input {
+        margin-left: 0.5em;
+    }
+    div.stickytop {
+        position: sticky;
+        top: 0;
+        width: 100%;
+        background: #f5f5f5;
+    }
+    .sticked {
+        box-shadow: 0 3px 3px lightgrey;
+    }
+    .sticked.kaufpreis label {
+        padding-top: 0.5em;
+        display: flex;
+        flex-direction: row;
+        white-space: nowrap;
+        align-items: center;
+    }
+    .sticked.kaufpreis label label {
+        align-self: flex-end;
+    }
+    .sticked.zins_bedingung label {
+        font-size: 0.8em;
+    }
+    .sticked label small {
+        display: none;
+    }
+    div.stickytop.kaufpreis {
+        padding-bottom: 0.2em;
+    }
+    div.stickytop.zins_bedingung {
+        top: 6.25em;
+        display: flex;
+        flex-direction: row;
+        align-items: stretch;
+        align-content: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        padding-top: 0.5em;
+        margin-top: -0.1em;
+    }
+    .zins_bedingung .number_wrapper input {
+        width: 65px;
+    }
+    p.nominal,
+    p.tilgung {
+        width: 50%;
+    }
+    p.jahre {
+        width: 100%;
+    }
+    p.nominal .number_wrapper,
+    p.tilgung .number_wrapper,
+    p.jahre .number_wrapper {
+    }
+    div.kaufpreis_wrapper {
+        position: sticky;
+        top: 0;
+        width: 100%;
+    }
+    div.kaufpreis button {
+        height: 2em;
     }
 
     #neukauf_parameter p {
@@ -431,12 +492,15 @@ table td {
                     <button @click="resetAll">Werte zurücksetzen</button>
                     <button @click="copyToClipboard" title="individuellen Link in die Zwischenablage">Kopiere Link</button>
                 </legend>
-                <p>
-                    <label for="kaufpreis" title="Kaufpreis der Immobilie oder Vermögenswert der als Pfand hinterlegt wird">Kaufpreis der Immobilie:
-                        <label for="neukauf" class="neukauf"><input id="neukauf" v-model="neukauf" type="checkbox"> Neukauf?</label>
-                    </label>
-                    <number-input v-model.number="kaufpreis" class="kaufpreis" step="1000" min="0"></number-input>
-                </p>
+                <div class="stickytop-sentinel"></div>
+                <div class="stickytop kaufpreis">
+                    <div class="kaufpreis_wrapper">
+                        <label for="kaufpreis" title="Kaufpreis der Immobilie oder Vermögenswert der als Pfand hinterlegt wird">Kaufpreis der Immobilie:
+                            <label for="neukauf" class="neukauf"><input id="neukauf" v-model="neukauf" type="checkbox"> Neukauf?</label>
+                        </label>
+                        <number-input v-model.number="kaufpreis" class="kaufpreis" step="1000" min="0"></number-input>
+                    </div>
+                </div>
 
                 <fieldset id="neukauf_parameter" v-show="neukauf">
                     <legend>Kosten beim Neukauf</legend>
@@ -457,15 +521,18 @@ table td {
                     <number-input v-model.number="eigenkapital" step="500" min="0"></number-input>
                 </p>
                 <hr>
-                <p><label for="nominal">Zinssatz <small>in % p.a.</small>: </label>
-                    <number-input v-model.number="nominal" step="0.01" min="0"></number-input>
-                </p>
-                <p><label for="tilgung">Anfängliche Tilgung <small>in % p.a.</small>: </label>
-                    <number-input v-model.number="tilgung" step="0.01" min="0"></number-input>
-                </p>
-                <p><label for="jahre">Dauer der Zinsbindung<strong v-if="showMaxJahre"> (max. {{ jahre_max }} Jahre)</strong>:</label>
-                    <number-input v-model.number="jahre" step="1" min="1" :max="jahre_max"></number-input>
-                </p>
+                <div class="stickytop-sentinel"></div>
+                <div class="stickytop zins_bedingung">
+                    <p class="nominal"><label for="nominal">Zinssatz <small>in % p.a.</small>: </label>
+                        <number-input v-model.number="nominal" step="0.01" min="0"></number-input>
+                    </p>
+                    <p class="tilgung"><label for="tilgung">Tilgung <small>in % p.a.</small>: </label>
+                        <number-input v-model.number="tilgung" step="0.01" min="0"></number-input>
+                    </p>
+                    <p class="jahre"><label for="jahre">Dauer der Zinsbindung<strong v-if="showMaxJahre"> (max. {{ jahre_max }} Jahre)</strong>:</label>
+                        <number-input v-model.number="jahre" step="1" min="1" :max="jahre_max"></number-input>
+                    </p>
+                </div>
                 <hr>
                 <p class="gesamtkosten"><label>Gesamtkosten:</label> <span>{{ parseFloat(gesamtkosten).toFixed(2) }}</span></p>
                 <p class="darlehen"><label>Darlehensbetrag:</label> <span>{{ darlehen }}</span></p>
@@ -480,14 +547,15 @@ table td {
 
 
         <div>
-            <fieldset id="sonderzahlung_wrapper">
-                <legend>Sonderzahlungen ({{jahre}} Jahre)</legend>
-                <p class="max_sonderzahlung"><label for="max_sonderzahlung">Max. Sonderzahlung <small>in % je p.a. ({{ Number(darlehen / 100 * max_sonderzahlung).toFixed(2) }} €)</small>: </label>
+            <button @click="toggleClass" class="sonderzahlungToggler">Sonderzahlungen öffnen</button>
+            <fieldset id="sonderzahlung_wrapper" class="sonderzahlung" :class="{'on': isOn}">
+                <p class="max_sonderzahlung">
+                    <legend>Sonderzahlungen ({{jahre}} Jahre)</legend>
                     <number-input v-model.number="max_sonderzahlung" step="0.01" min="1"></number-input>
-                    <button @click="toggleClass" class="sonderzahlungToggler">Sonderzahlungen öffnen</button>
+                    <label for="max_sonderzahlung">Max. Sonderzahlung <small>in % je p.a. ({{ Number(darlehen / 100 * max_sonderzahlung).toFixed(2) }} €)</small>: </label>
                 </p>
                 <hr>
-                <p class="sonderzahlung" v-for="(zahlung, index) in sonderzahlungen" :key="index" :class="{'on': isOn}" >
+                <p class="sonderzahlung" v-for="(zahlung, index) in sonderzahlungen" :key="index" :class="{'on': isOn}">
                     <label :for="'sonderzahlung' + (index + 1)">Sonderzahlung Jahr {{ index + 1 }}: </label>
                     <number-input
                             v-model.number="sonderzahlungen[index]"
@@ -856,6 +924,27 @@ table td {
                     }, 250);
 
                 },
+
+                observeStickyElements() {
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            const stickyTarget = entry.target.nextElementSibling;
+
+                            if (!entry.isIntersecting) {
+                                stickyTarget.classList.add('sticked');
+                            } else {
+                                stickyTarget.classList.remove('sticked');
+                            }
+                        });
+                    }, {
+                        root: null,
+                        threshold: 1.0
+                    });
+
+                    document.querySelectorAll('.stickytop-sentinel').forEach(sentinel => {
+                        observer.observe(sentinel);
+                    });
+                }
             },
             watch: {
                 kaufpreis() {
@@ -953,6 +1042,7 @@ table td {
                 } else {
                     this.loadFromLocalStorage();
                 }
+                this.observeStickyElements();
             }
         });
 
