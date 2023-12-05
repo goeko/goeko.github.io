@@ -1,6 +1,9 @@
 <html lang="de" dir="ltr">
 <head>
     <meta charset="utf-8">
+    <link rel="icon" href="data:image/png;base64,mMkdQtdd8HuZiNtxOic/cOlmo7Q/MK2kM4j3sNz5jwlCdX8jRepp7Q68nS4VCgWONtlD6GxJHfpLm8twAAATxZtsN/2l+rS8IC2AE/FC3/8qvt46UhdVI+UN2QCdkKoJE1jFxsCmiZe25K1LuNepiBU31Hf8gHhJOu6sAI9WtcBE8YyDapwCq5xKxFS9Z4tjzkmx3BUCl/9nLrk26HiZe07HCid2V2bZpudBUE6/KQqLAZIIxpvP3uSQHksHNoqDXqYzoqxMQn3g0HyqJ336pSM72/AV9lkFeOc0fxhmfdUy9vvXyd2goWi11PMnbW/79mFkTi20706j/mhYrVKcOGrWAv3qO87L5Qc+GQzRj57VVDYG1XjD9piOw/25EhaAGsQzPRdhSLO2R1NThiol+lxMAGKY0D/YV5/02MlHavFovCzfwMBX2heiqkdLh7UtVcMZGjNzNP6QoKn1N7oLQHHZ9I4Byj/HO0g3G8dzDQq1+RZEzx8zmnb1aMUimh1YsWzECfPT1zBN06KGeOx8DxAvBWKIQlsGZjHhYb5wBtioqpmMwSf6ZmwBko9RGjbQeeWFHAhLGSftdYr8YXNdH04GxZxdG9GoBIyJdksDh7FfkTx3TBbmqd7OJytnYnizFa4WBk5+U9+cT8aVpUIucedZABZ1P3dk8NVIWL1Qnc9Q6Kur+VxtrUMNiG74BUu8eh3At9W1tCMk6PPOI7iMP862+HjimtJuapYvWO/mYTpxEs0G12W2AYEllEpjGmn7Bt+RegIdAzoAo+W3LrkGAs2KlRafh7rv0OVt/l1Rr5CmFiRSbPg0w0VDxcH6mtQUWKHyh2rFEbXtJHlydnCIZe3ei0emUXbrE+9RS+9OFKnsnk11NykhAbi9Znch3kyrPwH5F+4+RBWbNw9Ukkm0CeBOUT4aaYAm/DCQGd2f5X/ZTSalQrq/J/QlL2qdOown1RczZkkT5yOdkDBWwdbQByN+uTAGEsYxLTRqffbc3A1OEqzUfkCmrMyhr4ltT/hbUvH8aOtQ/fAi0hvfEDkX5/Xmw9h72sm5UanPnctKCbCnhWbWo6IqWj8b6g1JWPr0Y6rSlTXTlgkH3KeimWqTbemHgV+gkZY74q+M02TB+SsqFyM3WKoutLqyI5Jo2byMo7vPZf5JyjhUq57dIxGRHQDX2O6dLNI5g32TKWfQWwlOepUZkLbBNJzSZs6h8Ze12KC+ZEfGCbAGiBUdYoJ1iPcTVtnlPjGwdkuxO9kzUtv0Mjus3PAmRlpuH6G+V2eOGADBaUiN+i4HXNHW4Ek7UQTOGch0vGsAP+Y576hT434Znl7Ryt9vNOyiU9BBji7i2dybuGDb4+vB" type="image/png" sizes="16x16" />
+
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="description" content="goEko's Financial Calculator" />
@@ -38,7 +41,7 @@ body {
     font-size: 18px;
     font-family: Arial, Helvetica, sans-serif;
     margin: 0;
-    padding: 0;
+    padding: 10px 0 10px 10px;
     background: #f5f5f5;
     color: #575454;
     /*touch-action: pan-x pan-y;*/
@@ -135,7 +138,7 @@ div.kaufpreis button {
     height: 2em;
 }
 input[type="number"] {
-    width: 130px;
+    width: 145px;
     border-radius: 0;
     border: 1px solid black;
     flex-grow: 2;
@@ -189,7 +192,8 @@ input::-webkit-inner-spin-button {
 
 input[type="checkbox"] {
     width: auto;
-    margin: 0 10px 0 20px;
+    margin: 0 10px 0 0;
+    padding: 0;
 }
 span {
     display: block;
@@ -231,10 +235,14 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 label.neukauf {
-    width: 120px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
 }
 #neukauf_parameter label:last-child {
-    width: 85px;
+    display: flex;
+    flex-direction: row;
+    margin-left: 20px;
 }
 
 /*#sonderzahlung_wrapper input {
@@ -275,7 +283,7 @@ table td {
 
     #app > * {
         flex: 1 1 auto;
-        margin: 10px;
+        margin: 10px 10px 10px 0;
     }
 
     label, span {
@@ -432,13 +440,13 @@ table td {
 
                 <fieldset id="neukauf_parameter" v-show="neukauf">
                     <legend>Kosten beim Neukauf</legend>
-                    <p><label for="grundsteuer">Grunderwerbssteuer in % ({{ (kaufpreis / 100 * grundsteuer).toFixed(2) }} €): </label>
+                    <p><label for="grundsteuer">Grunderwerbssteuer <small>in % ({{ (kaufpreis / 100 * grundsteuer).toFixed(2) }} €)</small>: </label>
                         <number-input v-model.number="grundsteuer" step="0.01" min="0"></number-input>
                         <label for="includeGrundsteuer"><input id="includeGrundsteuer" v-model="includeGrundsteuer" type="checkbox"> Inkl.</label></p>
-                    <p><label for="notargericht">Notar- und Gerichtskosten in % ({{ (kaufpreis / 100 * notargericht).toFixed(2) }} €): </label>
+                    <p><label for="notargericht">Notar- und Gerichtskosten <small>in % ({{ (kaufpreis / 100 * notargericht).toFixed(2) }} €)</small>: </label>
                         <number-input v-model.number="notargericht" step="0.01" min="0"></number-input>
                         <label for="includeNotargericht"><input id="includeNotargericht" v-model="includeNotargericht" type="checkbox"> Inkl.</label></p>
-                    <p><label for="makler">Maklerprovision in % ({{ (kaufpreis / 100 * makler).toFixed(2) }} €): </label>
+                    <p><label for="makler">Maklerprovision <small>in % ({{ (kaufpreis / 100 * makler).toFixed(2) }} €)</small>: </label>
                         <number-input v-model.number="makler" step="0.01" min="0"></number-input>
                         <label for="includeMakler"><input id="includeMakler" v-model="includeMakler" type="checkbox">Inkl.</label></p>
                 </fieldset>
@@ -449,20 +457,20 @@ table td {
                     <number-input v-model.number="eigenkapital" step="500" min="0"></number-input>
                 </p>
                 <hr>
-                <p><label for="nominal">Zinssatz (eff.) in % p.a.: </label>
+                <p><label for="nominal">Zinssatz <small>in % p.a.</small>: </label>
                     <number-input v-model.number="nominal" step="0.01" min="0"></number-input>
                 </p>
-                <p><label for="tilgung">Anfängliche Tilgung in % p.a.: </label>
+                <p><label for="tilgung">Anfängliche Tilgung <small>in % p.a.</small>: </label>
                     <number-input v-model.number="tilgung" step="0.01" min="0"></number-input>
                 </p>
                 <p><label for="jahre">Dauer der Zinsbindung<strong v-if="showMaxJahre"> (max. {{ jahre_max }} Jahre)</strong>:</label>
                     <number-input v-model.number="jahre" step="1" min="1" :max="jahre_max"></number-input>
                 </p>
                 <hr>
-                <p class="gesamtkosten"><label>Gesamtkosten:</label> <span>{{ gesamtkosten }}</span></p>
+                <p class="gesamtkosten"><label>Gesamtkosten:</label> <span>{{ parseFloat(gesamtkosten).toFixed(2) }}</span></p>
                 <p class="darlehen"><label>Darlehensbetrag:</label> <span>{{ darlehen }}</span></p>
-                <p class="jaehrliche_ratenzahlung"><label>Jährliche Ratenzahlung nominal:</label> <span>{{ parseFloat(jaehrliche_ratenzahlung).toFixed(2) }}</span></p>
-                <p class="monatliche_rate"><label>Monatliche Ratenzahlung nominal:</label> <span>{{ monatliche_rate }}</span></p>
+                <p class="jaehrliche_ratenzahlung"><label>Jährliche Ratenzahlung:</label> <span>{{ parseFloat(jaehrliche_ratenzahlung).toFixed(2) }}</span></p>
+                <p class="monatliche_rate"><label>Monatliche Ratenzahlung:</label> <span>{{ monatliche_rate }}</span></p>
                 <p class="getilgter_betrag_zum_ende"><label>Getilgter Betrag <small>(bis zum Ende der Zinsbindung)</small>:</label> <span>{{ getilgter_betrag_zum_ende }}</span></p>
                 <p class="rest_schuld"><label>Restschuld <small>(am Ende der Zinsbindung)</small>:</label> <span>{{ rest_schuld }}</span></p>
                 <p class="bereits_gezahlte_summe"><label>Bereits bezahlt Summe:</label> <span>{{ bereits_gezahlte_summe }}</span></p>
@@ -474,7 +482,7 @@ table td {
         <div>
             <fieldset id="sonderzahlung_wrapper">
                 <legend>Sonderzahlungen ({{jahre}} Jahre)</legend>
-                <p class="max_sonderzahlung"><label for="max_sonderzahlung">Max. Sonderzahlung in % je p.a. ({{ Number(darlehen / 100 * max_sonderzahlung).toFixed(2) }} €): </label>
+                <p class="max_sonderzahlung"><label for="max_sonderzahlung">Max. Sonderzahlung <small>in % je p.a. ({{ Number(darlehen / 100 * max_sonderzahlung).toFixed(2) }} €)</small>: </label>
                     <number-input v-model.number="max_sonderzahlung" step="0.01" min="1"></number-input>
                     <button @click="toggleClass" class="sonderzahlungToggler">Sonderzahlungen öffnen</button>
                 </p>
