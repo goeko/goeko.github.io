@@ -616,6 +616,7 @@ table td {
                         <th>Jahr</th>
                         <th>Tilgung</th>
                         <th>Zinsen</th>
+                        <th>Sonderzahlung</th>
                         <th>Ausgaben p.a.</th>
                         <th>Getilgter Betrag</th>
                         <th>Restschuld</th>
@@ -626,6 +627,7 @@ table td {
                         <td>{{ year.jahr }}</td>
                         <td>{{ parseFloat(year.tilgung).toFixed(2) }}&nbsp;€</td>
                         <td>{{ parseFloat(year.zinsen).toFixed(2) }}&nbsp;€</td>
+                        <td>{{ parseFloat(year.sonderzahlung).toFixed(2) }}&nbsp;€</td>
                         <td>{{ parseFloat(year.tilgung + year.zinsen).toFixed(2) }}&nbsp;€</td>
                         <td>{{ parseFloat(year.getilgter_betrag_zum_ende).toFixed(2) }}&nbsp;€</td>
                         <td>{{ parseFloat(year.restschuld).toFixed(2) }}&nbsp;€</td>
@@ -711,6 +713,7 @@ table td {
                 maxJahreBerechnet: false,
                 max_sonderzahlung: 5,
                 sonderzahlungen: [],
+                sonderzahlungen_all: 0,
                 monatliche_rate: 0,
                 getilgter_betrag_zum_ende: 0,
                 rest_schuld: 0,
@@ -794,6 +797,7 @@ table td {
                     while (i <= (jahre * zahlungenProJahr) && rest_schuld > 0) {
                         let jaehrliche_zinsen_nominal = (rest_schuld * (nominal) / zahlungenProJahr) / 100;
                         let jaehrliche_tilgung = festzinz - jaehrliche_zinsen_nominal;
+                        this.sonderzahlungen_all = this.sonderzahlungen[(i / 12) - 1];
                         if (i % 12 === 0) {
                             var jahr = i / 12;
                             if (jahr <= this.sonderzahlungen.length) {
@@ -802,9 +806,10 @@ table td {
                             tilgungsplan.push({
                                 jahr: jahr,
                                 tilgung: jaehrliche_tilgung * 12,
-                                zinsen: jaehrliche_zinsen_nominal * 12,
+                                zinsen: (jaehrliche_zinsen_nominal * 12) + this.sonderzahlungen[jahr - 1],
                                 restschuld: rest_schuld - jaehrliche_tilgung,
-                                getilgter_betrag_zum_ende: this.darlehen - rest_schuld + jaehrliche_tilgung
+                                getilgter_betrag_zum_ende: this.darlehen - rest_schuld + jaehrliche_tilgung,
+                                sonderzahlung: this.sonderzahlungen[jahr - 1]
                             });
                         }
                         rest_schuld = rest_schuld - jaehrliche_tilgung;
