@@ -256,6 +256,14 @@ label.neukauf {
     width: 11em !important;
     min-width: 11em !important;
 }*/
+div.max_sonderzahlung {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+div.max_sonderzahlung legend {
+    flex-grow: 1;
+}
 [for="max_sonderzahlung"] {
     margin-bottom: 0.5em;
 }
@@ -335,10 +343,10 @@ table td {
         background: #f5f5f5;
     }
     .sticked {
-        box-shadow: 0 3px 3px lightgrey;
+        box-shadow: 0 1px 0 black;
     }
     div.stickytop.kaufpreis {
-        z-index: 9;
+        z-index: 10;
     }
     .kaufpreis_wrapper {
         display: block;
@@ -375,6 +383,7 @@ table td {
         flex-wrap: wrap;
         padding-top: 0.5em;
         margin-top: -0.1em;
+        z-index: 20;
     }
     .zins_bedingung .number_wrapper input {
         width: 65px;
@@ -404,6 +413,10 @@ table td {
         align-items: center;
         justify-content: space-between;
         flex-wrap: wrap;
+    }
+    #neukauf_parameter p label:first-child
+    {
+        flex-grow: 1;
     }
 
     .number_wrapper {
@@ -480,10 +493,9 @@ table td {
         font-size: 14px;
     }
 
-   /* p.max_sonderzahlung {
-        display: flex;
-        flex-direction: row;
-    }*/
+   div.max_sonderzahlung {
+        display: block;
+    }
     .sonderzahlung {
         display: none;
     }
@@ -498,6 +510,11 @@ table td {
         font-size: 1.25em;
         width: 100%;
         text-align: center;
+    }
+}
+@media screen and (max-width: 600px) {
+    .zins_bedingung .number_wrapper input {
+        width: 65px;
     }
 }
 
@@ -520,39 +537,39 @@ table td {
                         <label for="kaufpreis" title="Kaufpreis der Immobilie oder Vermögenswert der als Pfand hinterlegt wird">Kaufpreis der Immobilie:
                             <label for="neukauf" class="neukauf"><input id="neukauf" v-model="neukauf" type="checkbox"> Neukauf?</label>
                         </label>
-                        <number-input v-model.number="kaufpreis" class="kaufpreis" step="1000" min="0"></number-input>
+                        <number-input v-model.number="kaufpreis" input-id="kaufpreis" input-id="max_sonderzahlung" class="kaufpreis" step="1000" min="0"></number-input>
                     </div>
                 </div>
 
                 <fieldset id="neukauf_parameter" v-show="neukauf">
                     <legend>Kosten beim Neukauf</legend>
                     <p><label for="grundsteuer">Grunderwerbssteuer <small>in % ({{ (kaufpreis / 100 * grundsteuer).toFixed(2) }} €)</small>: </label>
-                        <number-input v-model.number="grundsteuer" step="0.01" min="0"></number-input>
+                        <number-input v-model.number="grundsteuer" input-id="grundsteuer" step="0.01" min="0"></number-input>
                         <label for="includeGrundsteuer"><input id="includeGrundsteuer" v-model="includeGrundsteuer" type="checkbox"> Inkl.</label></p>
                     <p><label for="notargericht">Notar- und Gerichtskosten <small>in % ({{ (kaufpreis / 100 * notargericht).toFixed(2) }} €)</small>: </label>
-                        <number-input v-model.number="notargericht" step="0.01" min="0"></number-input>
+                        <number-input v-model.number="notargericht" input-id="notargericht" step="0.01" min="0"></number-input>
                         <label for="includeNotargericht"><input id="includeNotargericht" v-model="includeNotargericht" type="checkbox"> Inkl.</label></p>
                     <p><label for="makler">Maklerprovision <small>in % ({{ (kaufpreis / 100 * makler).toFixed(2) }} €)</small>: </label>
-                        <number-input v-model.number="makler" step="0.01" min="0"></number-input>
+                        <number-input v-model.number="makler" input-id="makler" step="0.01" min="0"></number-input>
                         <label for="includeMakler"><input id="includeMakler" v-model="includeMakler" type="checkbox">Inkl.</label></p>
                 </fieldset>
                 <p class="baureno-wrapper"><label for="baureno">Bau-/Renovierungskosten: </label>
-                    <number-input v-model.number="baureno" step="500" min="0"></number-input>
+                    <number-input v-model.number="baureno" input-id="baureno" step="500" min="0"></number-input>
                 </p>
                 <p class="eigenkapital-wrapper"><label for="eigenkapital">Eigenkapital <small>(min. Steuern, Notar und Auslagen)</small>: </label>
-                    <number-input v-model.number="eigenkapital" step="500" min="0"></number-input>
+                    <number-input v-model.number="eigenkapital" input-id="eigenkapital" step="500" min="0"></number-input>
                 </p>
                 <hr>
                 <div class="stickytop-sentinel"></div>
                 <div class="stickytop zins_bedingung">
                     <p class="nominal"><label for="nominal">Zinssatz <small>in % p.a.</small>: </label>
-                        <number-input v-model.number="nominal" step="0.01" min="0"></number-input>
+                        <number-input v-model.number="nominal" input-id="nominal" step="0.01" min="0"></number-input>
                     </p>
                     <p class="tilgung"><label for="tilgung">Tilgung <small>in % p.a.</small>: </label>
-                        <number-input v-model.number="tilgung" step="0.01" min="0"></number-input>
+                        <number-input v-model.number="tilgung" input-id="tilgung" step="0.01" min="0"></number-input>
                     </p>
                     <p class="jahre"><label for="jahre">Dauer der Zinsbindung<strong v-if="showMaxJahre"> (max. {{ jahre_max }} Jahre)</strong>:</label>
-                        <number-input v-model.number="jahre" step="1" min="1" :max="jahre_max"></number-input>
+                        <number-input v-model.number="jahre" input-id="jahre" step="1" min="1" :max="jahre_max"></number-input>
                     </p>
                 </div>
                 <hr>
@@ -571,16 +588,17 @@ table td {
         <div>
             <button @click="toggleClass" class="sonderzahlungToggler">Sonderzahlungen öffnen</button>
             <fieldset id="sonderzahlung_wrapper" class="sonderzahlung" :class="{'on': isOn}">
-                <p class="max_sonderzahlung">
+                <div class="max_sonderzahlung">
                     <legend>Sonderzahlungen ({{jahre}} Jahre)</legend>
                     <label for="max_sonderzahlung">Max. Sonderzahlung <small>in % je p.a. ({{ Number(darlehen / 100 * max_sonderzahlung).toFixed(2) }} €)</small>: </label>
-                    <number-input v-model.number="max_sonderzahlung" step="0.01" min="1"></number-input>
-                </p>
+                    <number-input v-model.number="max_sonderzahlung" input-id="max_sonderzahlung" step="0.01" min="1"></number-input>
+                </div>
                 <hr>
                 <p class="sonderzahlung" v-for="(zahlung, index) in sonderzahlungen" :key="index" :class="{'on': isOn}">
                     <label :for="'sonderzahlung' + (index + 1)">Sonderzahlung Jahr {{ index + 1 }}: </label>
                     <number-input
                             v-model.number="sonderzahlungen[index]"
+                            input-id="sonderzahlungen[index]"
                             :step="500"
                             :min="0"
                             :max="maxSonderzahlungValue">
@@ -704,6 +722,9 @@ table td {
                 originalData: null
             },
             computed: {
+                inputId() {
+                    return 'input-' + this.value.replace(/[^a-zA-Z0-9]/g, '-');
+                },
                 gesamtkosten: function () {
                     return this.calculateTotalCosts();
                 },
@@ -1075,7 +1096,7 @@ table td {
         });
 
         Vue.component('number-input', {
-            props: ['value', 'step', 'min', 'max'],
+            props: ['value', 'step', 'min', 'max', 'inputId'],
             inheritAttrs: false,
             template: `
 <div :class="['number_wrapper', $attrs.class]">
@@ -1090,7 +1111,7 @@ table td {
             title="Minus (-), Pfeil nach unten">
         -
     </button>
-    <input type="number" :value="displayValue"
+    <input type="number" :id="inputId" :value="displayValue"
        @input="updateValue($event.target.value)"
        @blur="formatValue"
        @keydown="handleInputKeyDown"
