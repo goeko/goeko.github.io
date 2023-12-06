@@ -140,6 +140,7 @@ div.kaufpreis button {
 }
 input[type="number"] {
     width: 145px;
+    max-width: 145px;
     border-radius: 0;
     border: 1px solid black;
     flex-grow: 2;
@@ -205,6 +206,11 @@ span {
 span::after {
     content: " €";
 }
+.kaufpreis_wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+}
 p.darlehen {
     color: blue;
     font-size: var(--highlight-font-size);
@@ -250,6 +256,9 @@ label.neukauf {
     width: 11em !important;
     min-width: 11em !important;
 }*/
+[for="max_sonderzahlung"] {
+    margin-bottom: 0.5em;
+}
 table {
     border-collapse: collapse;
     border: 1px solid black;
@@ -273,7 +282,7 @@ table td {
     display: none;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 768px) {
     body {
         font-size: 16px;
     }
@@ -331,12 +340,18 @@ table td {
     div.stickytop.kaufpreis {
         z-index: 9;
     }
+    .kaufpreis_wrapper {
+        display: block;
+    }
     .kaufpreis label {
         padding-top: 0.5em;
         display: flex;
         flex-direction: row;
         white-space: nowrap;
         align-items: center;
+    }
+    div.kaufpreis input {
+        /*max-width: 290px;*/
     }
     .sticked.kaufpreis label label {
         align-self: flex-end;
@@ -558,8 +573,8 @@ table td {
             <fieldset id="sonderzahlung_wrapper" class="sonderzahlung" :class="{'on': isOn}">
                 <p class="max_sonderzahlung">
                     <legend>Sonderzahlungen ({{jahre}} Jahre)</legend>
-                    <number-input v-model.number="max_sonderzahlung" step="0.01" min="1"></number-input>
                     <label for="max_sonderzahlung">Max. Sonderzahlung <small>in % je p.a. ({{ Number(darlehen / 100 * max_sonderzahlung).toFixed(2) }} €)</small>: </label>
+                    <number-input v-model.number="max_sonderzahlung" step="0.01" min="1"></number-input>
                 </p>
                 <hr>
                 <p class="sonderzahlung" v-for="(zahlung, index) in sonderzahlungen" :key="index" :class="{'on': isOn}">
@@ -955,6 +970,7 @@ table td {
             },
             watch: {
                 kaufpreis() {
+                    this.maxJahreBerechnet = false;
                     this.calculateEigenkapital();
                     this.RR();
                 },
@@ -972,6 +988,7 @@ table td {
                 },
                 neukauf(newValue, oldValue) {
                     if (newValue !== oldValue || newValue) {
+                        this.maxJahreBerechnet = false;
                         this.calculateEigenkapital();
                     }
                     this.RR();
@@ -980,15 +997,19 @@ table td {
                     this.RR();
                 },
                 eigenkapital: function () {
+                    this.maxJahreBerechnet = false;
                     this.RR();
                 },
                 nominal: function () {
+                    this.maxJahreBerechnet = false;
                     this.RR();
                 },
                 tilgung: function () {
+                    this.maxJahreBerechnet = false;
                     this.RR();
                 },
                 jahre(newValue) {
+                    this.maxJahreBerechnet = false;
                     newValue = parseInt(newValue); // Sicherstellen, dass 'jahre' eine Ganzzahl ist
                     if (newValue > this.jahre_max) {
                         this.jahre = this.jahre_max;
