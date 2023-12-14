@@ -1,5 +1,5 @@
 <?php
-$srcDomain = "https://www.wsm-net.de";
+$srcDomain = "https://www.domain.tld";
 $requestedPath = $_GET['path'];
 
 // Definieren Sie den Pfad zum Cache-Verzeichnis
