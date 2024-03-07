@@ -1,9 +1,6 @@
 <html lang="de" dir="ltr">
 <head>
     <meta charset="utf-8">
-    <link rel="icon" href="data:image/png;base64,mMkdQtdd8HuZiNtxOic/cOlmo7Q/MK2kM4j3sNz5jwlCdX8jRepp7Q68nS4VCgWONtlD6GxJHfpLm8twAAATxZtsN/2l+rS8IC2AE/FC3/8qvt46UhdVI+UN2QCdkKoJE1jFxsCmiZe25K1LuNepiBU31Hf8gHhJOu6sAI9WtcBE8YyDapwCq5xKxFS9Z4tjzkmx3BUCl/9nLrk26HiZe07HCid2V2bZpudBUE6/KQqLAZIIxpvP3uSQHksHNoqDXqYzoqxMQn3g0HyqJ336pSM72/AV9lkFeOc0fxhmfdUy9vvXyd2goWi11PMnbW/79mFkTi20706j/mhYrVKcOGrWAv3qO87L5Qc+GQzRj57VVDYG1XjD9piOw/25EhaAGsQzPRdhSLO2R1NThiol+lxMAGKY0D/YV5/02MlHavFovCzfwMBX2heiqkdLh7UtVcMZGjNzNP6QoKn1N7oLQHHZ9I4Byj/HO0g3G8dzDQq1+RZEzx8zmnb1aMUimh1YsWzECfPT1zBN06KGeOx8DxAvBWKIQlsGZjHhYb5wBtioqpmMwSf6ZmwBko9RGjbQeeWFHAhLGSftdYr8YXNdH04GxZxdG9GoBIyJdksDh7FfkTx3TBbmqd7OJytnYnizFa4WBk5+U9+cT8aVpUIucedZABZ1P3dk8NVIWL1Qnc9Q6Kur+VxtrUMNiG74BUu8eh3At9W1tCMk6PPOI7iMP862+HjimtJuapYvWO/mYTpxEs0G12W2AYEllEpjGmn7Bt+RegIdAzoAo+W3LrkGAs2KlRafh7rv0OVt/l1Rr5CmFiRSbPg0w0VDxcH6mtQUWKHyh2rFEbXtJHlydnCIZe3ei0emUXbrE+9RS+9OFKnsnk11NykhAbi9Znch3kyrPwH5F+4+RBWbNw9Ukkm0CeBOUT4aaYAm/DCQGd2f5X/ZTSalQrq/J/QlL2qdOown1RczZkkT5yOdkDBWwdbQByN+uTAGEsYxLTRqffbc3A1OEqzUfkCmrMyhr4ltT/hbUvH8aOtQ/fAi0hvfEDkX5/Xmw9h72sm5UanPnctKCbCnhWbWo6IqWj8b6g1JWPr0Y6rSlTXTlgkH3KeimWqTbemHgV+gkZY74q+M02TB+SsqFyM3WKoutLqyI5Jo2byMo7vPZf5JyjhUq57dIxGRHQDX2O6dLNI5g32TKWfQWwlOepUZkLbBNJzSZs6h8Ze12KC+ZEfGCbAGiBUdYoJ1iPcTVtnlPjGwdkuxO9kzUtv0Mjus3PAmRlpuH6G+V2eOGADBaUiN+i4HXNHW4Ek7UQTOGch0vGsAP+Y576hT434Znl7Ryt9vNOyiU9BBji7i2dybuGDb4+vB" type="image/png" sizes="16x16" />
-
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="description" content="goEko's Financial Calculator" />
@@ -1241,6 +1238,15 @@ img {
             }
         });
 
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js')
+                .then((registration) => {
+                    console.log('Service Worker registered with scope:', registration.scope);
+                })
+                .catch((err) => {
+                    console.log('Service Worker registration failed:', err);
+                });
+        }
 
 </script>
 
