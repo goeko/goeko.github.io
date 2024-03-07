@@ -1,0 +1,19 @@
+{
+    "name": "KREDIAPP",
+    "short_name": "KREDIAPP",
+    "icons": [
+        {
+            "src": "/assets/icons/android-chrome-192x192.png?v=2",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/assets/icons/android-chrome-512x512.png?v=2",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "theme_color": "#eefff6",
+    "background_color": "#eefff6",
+    "display": "standalone"
+}
