@@ -1,6 +1,14 @@
 {
+    "manifest_version": 2,
     "name": "KREDIAPP",
+    "description": "Financial Calculator",
     "short_name": "KREDIAPP",
+    "version": "1.0",
+    "app": {
+        "background": {
+            "scripts": ["background.js"]
+        }
+    },
     "icons": [
         {
             "src": "/assets/icons/android-chrome-192x192.png?v=2",
@@ -15,5 +23,53 @@
     ],
     "theme_color": "#eefff6",
     "background_color": "#eefff6",
-    "display": "standalone"
+    "display": "standalone",
+    "permissions": [
+        "unlimitedStorage",
+        "notifications"
+    ],
+    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+    "externally_connectable": {
+        "matches": ["*://*.github.io/*"]
+    },
+    "web_accessible_resources": [
+        "/kreditrechner.html",
+        "/qrcode.min.js",
+        "/vue@2.js",
+        "/assets/icons/apple-touch-icon-144x144.png?v=2",
+        "/assets/icons/apple-touch-icon-152x152-precomposed.png?v=2",
+        "/assets/icons/apple-touch-icon-152x152.png?v=2",
+        "/assets/icons/apple-touch-icon-180x180-precomposed.png?v=2",
+        "/assets/icons/apple-touch-icon-180x180.png?v=2",
+        "/assets/icons/apple-touch-icon-57x57-precomposed.png?v=2",
+        "/assets/icons/apple-touch-icon-57x57.png?v=2",
+        "/assets/icons/apple-touch-icon-60x60-precomposed.png?v=2",
+        "/assets/icons/apple-touch-icon-60x60.png?v=2",
+        "/assets/icons/apple-touch-icon-72x72-precomposed.png?v=2",
+        "/assets/icons/apple-touch-icon-72x72.png?v=2",
+        "/assets/icons/apple-touch-icon-76x76-precomposed.png?v=2",
+        "/assets/icons/apple-touch-icon-76x76.png?v=2",
+        "/assets/icons/apple-touch-icon-precomposed.png?v=2",
+        "/assets/icons/apple-touch-icon.png?v=2",
+        "/assets/icons/browserconfig.xml?v=2",
+        "/assets/icons/favicon-16x16.png?v=2",
+        "/assets/icons/favicon-32x32.png?v=2",
+        "/assets/icons/favicon.ico?v=2",
+        "/assets/icons/html_code.html?v=2",
+        "/assets/icons/mstile-144x144.png?v=2",
+        "/assets/icons/mstile-150x150.png?v=2",
+        "/assets/icons/mstile-310x150.png?v=2",
+        "/assets/icons/mstile-310x310.png?v=2",
+        "/assets/icons/mstile-70x70.png?v=2",
+        "/assets/icons/safari-pinned-tab.svg?v=2",
+        "/assets/icons/site.webmanifest?v=2",
+        "/assets/icons/android-chrome-192x192.png?v=2",
+        "/assets/icons/android-chrome-512x512.png?v=2",
+        "/assets/icons/apple-touch-icon-114x114-precomposed.png?v=2",
+        "/assets/icons/apple-touch-icon-114x114.png?v=2",
+        "/assets/icons/apple-touch-icon-120x120-precomposed.png?v=2",
+        "/assets/icons/apple-touch-icon-120x120.png?v=2",
+        "/assets/icons/apple-touch-icon-144x144-precomposed.png?v=2"
+    ]
+
 }
