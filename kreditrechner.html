@@ -23,7 +23,19 @@
     <meta name="format-detection" content="email=no" />
 
     <meta http-equiv="x-ua-compatible" content="IE=edge" />
-    <meta name="apple-mobile-web-app-capable" content="no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon.png?v=2">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32x32.png?v=2">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16x16.png?v=2">
+    <link rel="manifest" href="/assets/icons/site.webmanifest?v=2">
+    <link rel="mask-icon" href="/assets/icons/safari-pinned-tab.svg?v=2" color="#5bbad5">
+    <link rel="shortcut icon" href="/assets/icons/favicon.ico?v=2">
+    <meta name="apple-mobile-web-app-title" content="KREDIAPP">
+    <meta name="application-name" content="KREDIAPP">
+    <meta name="msapplication-TileColor" content="#d8ecec">
+    <meta name="msapplication-config" content="/assets/icons/browserconfig.xml?v=2">
+    <meta name="theme-color" content="#eefff6">
+
     <title>goEko's Financial Calculator</title>
     <script src="./qrcode.min.js"></script>
     <script src="./vue@2.js"></script>
@@ -556,7 +568,7 @@ table td {
                 <p class="baureno-wrapper"><label for="baureno">Bau-/Renovierungskosten: </label>
                     <number-input v-model.number="baureno" input-id="baureno" step="500" min="0"></number-input>
                 </p>
-                <p class="eigenkapital-wrapper"><label for="eigenkapital">Eigenkapital <small>(min. Steuern, Notar und Auslagen)</small>: </label>
+                <p class="eigenkapital-wrapper"><label for="eigenkapital">Eigenkapital<small v-show="neukauf"> (min. Steuern, Notar und Auslagen)</small>: </label>
                     <number-input v-model.number="eigenkapital" input-id="eigenkapital" step="500" min="0"></number-input>
                 </p>
                 <hr>
@@ -624,11 +636,11 @@ table td {
                     </thead>
                     <tbody>
                     <tr v-for="year in tilgungsplan" :key="year.jahr">
-                        <td>{{ year.jahr }}</td>
+                        <td>{{ parseInt(new Date().getFullYear()) + year.jahr }}</td>
                         <td>{{ parseFloat(year.tilgung).toFixed(2) }}&nbsp;€</td>
                         <td>{{ parseFloat(year.zinsen).toFixed(2) }}&nbsp;€</td>
                         <td>{{ parseFloat(year.sonderzahlung).toFixed(2) }}&nbsp;€</td>
-                        <td>{{ parseFloat(year.tilgung + year.zinsen).toFixed(2) }}&nbsp;€</td>
+                        <td>{{ parseFloat(year.tilgung + year.zinsen + year.sonderzahlung).toFixed(2) }}&nbsp;€</td>
                         <td>{{ parseFloat(year.getilgter_betrag_zum_ende).toFixed(2) }}&nbsp;€</td>
                         <td>{{ parseFloat(year.restschuld).toFixed(2) }}&nbsp;€</td>
                     </tr>
@@ -806,7 +818,7 @@ table td {
                             tilgungsplan.push({
                                 jahr: jahr,
                                 tilgung: jaehrliche_tilgung * 12,
-                                zinsen: (jaehrliche_zinsen_nominal * 12) + this.sonderzahlungen[jahr - 1],
+                                zinsen: (jaehrliche_zinsen_nominal * 12),
                                 restschuld: rest_schuld - jaehrliche_tilgung,
                                 getilgter_betrag_zum_ende: this.darlehen - rest_schuld + jaehrliche_tilgung,
                                 sonderzahlung: this.sonderzahlungen[jahr - 1]
