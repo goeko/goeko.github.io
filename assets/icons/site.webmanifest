@@ -73,9 +73,5 @@
         "/assets/icons/apple-touch-icon-120x120.png?v=2",
         "/assets/icons/apple-touch-icon-144x144-precomposed.png?v=2"
     ],
-    "offline_enabled": true,
-    "service_worker": {
-        "script": "service-worker.js",
-        "scope": "/"
-    }
+    "offline_enabled": true
 }
